@@ -51,11 +51,7 @@ export const otp2 = async (
 };
 export const productView = async () => {
   try {
-    const response = await axiosInstance.get("/products/", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
-      },
-    });
+    const response = await axiosInstance.get("/products/");
     return response.data;
   } catch (error: any) {
     throw error;

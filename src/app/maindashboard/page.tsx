@@ -52,31 +52,13 @@ export default function MainDashboard() {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [temp, setTemp] = useState<string>("");
   const [addModal, setAddModal] = useState(false);
-  const [showAdPopup, setShowAdPopup] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     async function getFetchData() {
       setSkeletonLoading(true);
-      loginStore.reset();
       try {
-        const storedToken = localStorage.getItem("access");
-        if (!storedToken) {
-          messageApi.error("Unauthorized access. Please login.");
-          router.push("/login");
-          return;
-        }
         const response = await productView();
-        if (
-          response?.status === 401 ||
-          response?.data?.detail === "Unauthorized"
-        ) {
-          messageApi.error(
-            response.data.detail || "Unauthorized access. Please login.",
-          );
-          router.push("/login");
-          return;
-        }
 
         if (response) {
           setData(response);
@@ -86,10 +68,7 @@ export default function MainDashboard() {
         }
       } catch (error: any) {
         console.error("Error fetching data:", error);
-        if (error?.response?.status === 401) {
-          messageApi.error("Session expired. Please login again.");
-          router.push("/login");
-        }
+
         setSkeletonLoading(false);
       } finally {
         setSkeletonLoading(false);
