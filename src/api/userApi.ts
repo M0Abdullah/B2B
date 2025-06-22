@@ -1,0 +1,125 @@
+import axiosInstance from "./axiosInstance";
+
+export const registerUser = async (userData: any) => {
+  try {
+    const response = await axiosInstance.post("/signup/", userData);
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const registerUserOtp = async (userData: any) => {
+  try {
+    const response = await axiosInstance.post("/verified-signup/", userData);
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const login = async (userData: any) => {
+  try {
+    const response = await axiosInstance.post("/login/", userData);
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const otp1 = async (email: string) => {
+  try {
+    const response = await axiosInstance.post("/forgot-password/", { email });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const otp2 = async (
+  email: string,
+  otp: string,
+  new_password: string,
+) => {
+  try {
+    const response = await axiosInstance.post("/reset-password/", {
+      email,
+      otp,
+      new_password,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const productView = async () => {
+  try {
+    const response = await axiosInstance.get("/products/", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const productViewById = async (id: number) => {
+  try {
+    const response = await axiosInstance.get(`/products/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const productCreate = async (data: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/products/create/`, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const review = async (data: FormData) => {
+  try {
+    const response = await axiosInstance.post(`/reviews/`, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const productCategory = async () => {
+  try {
+    const response = await axiosInstance.get(`/categories/`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const productSubCategory = async () => {
+  try {
+    const response = await axiosInstance.get(`/subcategories/`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
