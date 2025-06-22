@@ -29,7 +29,7 @@ class LoginStore {
       "| islogin:",
       this.islogin,
     );
-    this.saveToLocalStorage();
+    this.saveToLocalStorage()
   }
 
   saveToLocalStorage() {
