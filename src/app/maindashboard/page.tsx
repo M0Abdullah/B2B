@@ -58,6 +58,7 @@ export default function MainDashboard() {
   useEffect(() => {
     async function getFetchData() {
       setSkeletonLoading(true);
+      loginStore.reset();
       try {
         const storedToken = localStorage.getItem("access");
         if (!storedToken) {
