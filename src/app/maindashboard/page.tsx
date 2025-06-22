@@ -14,9 +14,27 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Badge } from "antd";
 import SearchFilter from "../searchfilter/page";
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import Navbar from "../../components/navbar/page";
 import Seller from "../seller/page";
 import loginStore from "@/store/page";
+=======
+=======
+>>>>>>> Stashed changes
+<<<<<<< HEAD
+import Navbar from "../navbar/page";
+import Seller from "../seller/page";
+import loginStore from "@/app/store/page";
+=======
+import Navbar from "../../components/navbar/page";
+import Seller from "../seller/page";
+import loginStore from "@/store/page";
+>>>>>>> d20b2a7 (Initial commit with project files)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 import { Modal, message, Skeleton } from "antd";
 import { useRouter } from "next/navigation";
 import { CrownOutlined } from "@ant-design/icons";

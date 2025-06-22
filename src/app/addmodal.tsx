@@ -9,7 +9,21 @@ import {
   Image,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import loginStore from "../store/page";
+=======
+=======
+>>>>>>> Stashed changes
+<<<<<<< HEAD
+import loginStore from "./store/page";
+=======
+import loginStore from "../store/page";
+>>>>>>> d20b2a7 (Initial commit with project files)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 const { TextArea } = Input;
@@ -140,7 +154,21 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
                   alt={`Ad Image ${index + 1}`}
                   className="rounded shadow"
                 />
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
               )
+=======
+=======
+>>>>>>> Stashed changes
+<<<<<<< HEAD
+              ),
+=======
+              )
+>>>>>>> d20b2a7 (Initial commit with project files)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
             )}
           </div>
         </div>
