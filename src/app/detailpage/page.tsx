@@ -6,7 +6,7 @@ import { Star, Mail, MapPin, CheckCircle } from "lucide-react";
 import { Button, Skeleton } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { productViewById } from "@/api/userApi";
+import { productViewById ,reviewProduct} from "@/api/userApi";
 
 // ✅ Child component that uses useSearchParams
 function ProductDetailsContent() {
@@ -19,6 +19,8 @@ function ProductDetailsContent() {
   const [productDetails, setProductDetails] = useState<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(true);
+
+  const [review, setReview] = useState({ rating: 5, comment: "" });
 
   const fetchProductDetails = async () => {
     setLoading(true);
@@ -46,6 +48,31 @@ function ProductDetailsContent() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    try {
+      const token = localStorage.getItem("access");
+      if (!token) {
+        messageApi.error("Unauthorized! Please login.");
+        router.push("/login");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("product", productId || "");
+      formData.append("rating", String(review.rating));
+      formData.append("comment", review.comment);
+
+      await reviewProduct(formData);
+
+      messageApi.success("Review submitted successfully!");
+      setReview({ rating: 5, comment: "" });
+      fetchProductDetails(); // reload updated reviews
+    } catch (error) {
+      console.error("Review error:", error);
+      messageApi.error("Failed to submit review.");
     }
   };
 
@@ -131,6 +158,40 @@ function ProductDetailsContent() {
                 ) : (
                   <p className="text-gray-500 text-sm">No reviews available.</p>
                 )}
+              </div>
+
+              {/* Add Review Form */}
+              <div className="mt-8 bg-gray-100 p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Leave a Review</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">Rating (1-5)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      value={review.rating}
+                      onChange={(e) => setReview((prev) => ({ ...prev, rating: Number(e.target.value) }))}
+                      className="w-full border px-3 py-2 rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">Comment</label>
+                    <textarea
+                      rows={3}
+                      value={review.comment}
+                      onChange={(e) => setReview((prev) => ({ ...prev, comment: e.target.value }))}
+                      className="w-full border px-3 py-2 rounded-md"
+                    />
+                  </div>
+                  <Button
+                    type="primary"
+                    onClick={handleSubmitReview}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Submit Review
+                  </Button>
+                </div>
               </div>
             </div>
           )}

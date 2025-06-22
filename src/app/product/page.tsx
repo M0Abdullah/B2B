@@ -24,7 +24,6 @@ import {
   productCategory,
   productCreate,
   productSubCategory,
-  review,
 } from "@/api/userApi";
 
 const { TextArea } = Input;
@@ -33,7 +32,6 @@ const { Title } = Typography;
 export default function Product() {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
-  const [showReviewModal, setShowReviewModal] = useState(false);
   const [sellerPreium, setSellerPremium] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -94,8 +92,18 @@ export default function Product() {
         throw new Error("Product ID not returned");
       }
 
-      setShowReviewModal(true);
       messageApi.success("Product created! Please leave a review.");
+      setForms({
+        name: "",
+        description: "",    
+        price: "",
+
+        category: "",
+        details: "",
+        image: null,
+        bussinesstype: "",
+        features: "",
+      });
     } catch (error) {
       console.error("❌ Error submitting product:", error);
       messageApi.error("Something went wrong. Try again.");
@@ -114,10 +122,7 @@ export default function Product() {
       reviewFormData.append("rating", String(reviewData.rating));
       reviewFormData.append("comment", reviewData.comment);
 
-      await review(reviewFormData);
-
       messageApi.success("Review submitted!");
-      setShowReviewModal(false);
       setReviewData({ rating: 5, comment: "" });
     } catch (err) {
       console.error("❌ Review submit error:", err);
@@ -266,15 +271,7 @@ export default function Product() {
                 }
               />
             </Col>
-            <Col xs={24} md={12}>
-              <Button
-                type="default"
-                className="text-orange-600 w-full border-orange-400 hover:border-orange-500"
-                onClick={() => setShowReviewModal(true)}
-              >
-                Leave a Review
-              </Button>
-            </Col>
+            
           </Row>
 
           <div className="mt-10 text-center space-y-4">
@@ -331,35 +328,9 @@ export default function Product() {
           ))}
         </div>
       </Modal>
-      <Modal
-        open={showReviewModal}
-        title="Write a Review"
-        onCancel={() => setShowReviewModal(false)}
-        onOk={handleReviewSubmit}
-      >
-        <div className="space-y-4">
-          <label className="block font-medium text-gray-700">Rating</label>
-          <Rate
-            allowClear={false}
-            value={reviewData.rating}
-            onChange={(value) =>
-              setReviewData((prev) => ({ ...prev, rating: value }))
-            }
-          />
+      
 
-          <label className="block font-medium text-gray-700 mt-4">
-            Comment
-          </label>
-          <TextArea
-            rows={4}
-            placeholder="Write your feedback..."
-            value={reviewData.comment}
-            onChange={(e) =>
-              setReviewData((prev) => ({ ...prev, comment: e.target.value }))
-            }
-          />
-        </div>
-      </Modal>
+
 
       {addModal && (
         <AddModal

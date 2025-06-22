@@ -82,7 +82,7 @@ export const productCreate = async (data: FormData) => {
     throw error;
   }
 };
-export const review = async (data: FormData) => {
+export const reviewProduct = async (data: FormData) => {
   try {
     const response = await axiosInstance.post(`/reviews/`, data, {
       headers: {

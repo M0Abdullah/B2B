@@ -24,6 +24,7 @@ import AddModal from "../addmodal";
 import { productView } from "@/api/userApi";
 
 type Product = {
+  image: string;
   id: string;
   name: string;
   price: string | number;
@@ -322,8 +323,8 @@ export default function MainDashboard() {
                 filteredProducts.map((product) => (
                   <Card key={product.id} className="flex gap-4 p-4 items-start">
                     <img
-                      src="/default-image.jpg"
-                      alt={product.name}
+                      src={product.image || "/placeholder.png"}
+                      alt={product.image}
                       className="w-24 h-24 object-cover rounded"
                     />
                     <CardContent className="p-0 flex flex-col justify-between">
