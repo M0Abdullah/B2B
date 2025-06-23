@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -42,6 +43,7 @@ export default function MainDashboard() {
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [skeletonloading, setSkeletonLoading] = useState(false);
+  const [detailPageLoading, setDetailPageLoading] = useState(false);
   const [category, setCategory] = useState("");
   const [seller, setSeller] = useState("");
   const [material, setMaterial] = useState("");
@@ -53,6 +55,7 @@ export default function MainDashboard() {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [temp, setTemp] = useState<string>("");
   const [addModal, setAddModal] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -67,9 +70,8 @@ export default function MainDashboard() {
         } else {
           console.warn("response is undefined");
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error fetching data:", error);
-
         setSkeletonLoading(false);
       } finally {
         setSkeletonLoading(false);
@@ -79,11 +81,21 @@ export default function MainDashboard() {
     getFetchData();
   }, [messageApi, router]);
 
-  if (loginStore.isBuyer) {
-    useEffect(() => {
-      setAddModal(true);
-    }, []);
-  }
+  // Handle hydration and buyer modal
+  useEffect(() => {
+    const checkHydration = () => {
+      if (loginStore.isHydrated) {
+        setIsHydrated(true);
+        if (loginStore.isBuyer) {
+          setAddModal(true);
+        }
+      } else {
+        // Check again after a short delay
+        setTimeout(checkHydration, 50);
+      }
+    };
+    checkHydration();
+  }, []);
 
   useEffect(() => {}, []);
 
@@ -183,7 +195,11 @@ export default function MainDashboard() {
 
   const handleLoginFirst = (productId: string) => {
     if (loginStore.islogin) {
-      router.push(`/detailpage?productId=${productId}`);
+      setDetailPageLoading(true);
+      // Add a delay for better UX and show loading
+      setTimeout(() => {
+        router.push(`/detailpage?productId=${productId}`);
+      }, 800);
     } else {
       messageApi.info("Please login for more details!");
     }
@@ -198,8 +214,38 @@ export default function MainDashboard() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen relative">
       {contextHolder}
+
+      {/* Detail Page Loading Overlay */}
+      {detailPageLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl max-w-sm mx-4">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              Loading Product Details...
+            </h3>
+            <p className="text-gray-600 text-center mb-4">
+              Please wait while we fetch the product information
+            </p>
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+              <div
+                className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
+            </div>
+            <div className="mt-4 text-xs text-gray-500 flex items-center">
+              <span className="mr-1">🔍</span>
+              Preparing detailed view...
+            </div>
+          </div>
+        </div>
+      )}
       <Navbar
         setPremium={setShowPremiumModal}
         premium={showPremiumModal}
@@ -211,7 +257,14 @@ export default function MainDashboard() {
       <ToastContainer position="top-center" autoClose={3000} />
       <SearchFilter />
 
-      {loginStore.isBuyer ? (
+      {!isHydrated ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-gray-500">Loading...</p>
+          </div>
+        </div>
+      ) : loginStore.isBuyer ? (
         <div className="flex flex-col md:flex-row gap-6 mt-6">
           <div className="w-full md:w-[300px]">
             <h2 className="text-xl font-semibold mb-2 text-gray-800 p-4">
@@ -223,26 +276,52 @@ export default function MainDashboard() {
               className="rounded border bg-white shadow"
             >
               <AccordionItem value="item-1">
-                <AccordionTrigger className="px-4 py-3">
-                  Related Categories
+                <AccordionTrigger className="px-4 text-lg font-semibold py-3 cursor-pointer ">
+                  Top Trending Categories
                 </AccordionTrigger>
-                <AccordionContent className="px-4 py-2">
-                  <div>- Kitchen Appliances</div>
-                  <div>- Cookware & Bakeware</div>
-                  <div>- Cutlery & Utensils</div>
-                  <div>- Kitchen Storage</div>
-                  <div>- Dining & Serveware</div>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger className="px-4 py-3">
-                  Trending Categories
-                </AccordionTrigger>
-                <AccordionContent className="px-4 py-2">
-                  <div>- Electric Kettles</div>
-                  <div>- Food Processors</div>
-                  <div>- Mixer Grinders</div>
-                  <div>- Microwave Ovens</div>
+                <AccordionContent className="px-4 justify-between ">
+                  <div className="flex flex-col gap-2 cursor-pointer">
+                    <li
+                      className="text-sm text-gray-600 hover:text-blue-500"
+                      onClick={() =>
+                        messageApi.info("This is under development")
+                      }
+                    >
+                      Kitchen Appliances
+                    </li>
+                    <li
+                      className="text-sm text-gray-600 hover:text-blue-500"
+                      onClick={() =>
+                        messageApi.info("This is under development")
+                      }
+                    >
+                      Cookware & Bakeware
+                    </li>
+                    <li
+                      className="text-sm text-gray-600 hover:text-blue-500"
+                      onClick={() =>
+                        messageApi.info("This is under development")
+                      }
+                    >
+                      Cutlery & Utensils
+                    </li>
+                    <li
+                      className="text-sm text-gray-600 hover:text-blue-500"
+                      onClick={() =>
+                        messageApi.info("This is under development")
+                      }
+                    >
+                      Kitchen Storage
+                    </li>
+                    <li
+                      className="text-sm text-gray-600 hover:text-blue-500"
+                      onClick={() =>
+                        messageApi.info("This is under development")
+                      }
+                    >
+                      Dining & Serveware
+                    </li>
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -285,13 +364,19 @@ export default function MainDashboard() {
                   onChange={(e) => setPriceRange(e.target.value)}
                 />
                 <select
-                  className="border rounded px-3 py-2 text-sm text-gray-700"
+                  className="border cursor-pointer rounded px-3 py-2 text-sm text-gray-700"
                   value={includeDesc}
                   onChange={(e) => setIncludeDesc(e.target.value)}
                 >
-                  <option value="">Include Description?</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
+                  <option className="cursor-pointer" value="">
+                    Include Description?
+                  </option>
+                  <option className="cursor-pointer" value="yes">
+                    Yes
+                  </option>
+                  <option className="cursor-pointer" value="no">
+                    No
+                  </option>
                 </select>
               </div>
               <div className="flex justify-end mt-4 gap-2">
@@ -365,22 +450,38 @@ export default function MainDashboard() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : isHydrated ? (
         <Seller />
+      ) : (
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-gray-500">Loading...</p>
+          </div>
+        </div>
       )}
 
       <Modal
         open={showPremiumModal}
         title={
-          <h2 className="text-orange-600 font-bold text-2xl text-center">
-            Choose a Premium Plan
-          </h2>
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-purple-500 to-pink-500 mb-2">
+              ✨ Choose Your Premium Plan
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Unlock the power of premium features
+            </p>
+          </div>
         }
         onCancel={() => setShowPremiumModal(false)}
         footer={[
-          <div className="flex justify-end gap-2">
-            <Button key="cancel" onClick={() => setShowPremiumModal(false)}>
-              Cancel
+          <div key="footer-buttons" className="flex justify-center gap-4 mt-6">
+            <Button
+              key="cancel"
+              onClick={() => setShowPremiumModal(false)}
+              className="px-8 py-2 h-auto rounded-xl border-2 border-gray-300 hover:border-gray-400 font-semibold"
+            >
+              Maybe Later
             </Button>
             <Button
               key="save"
@@ -389,52 +490,89 @@ export default function MainDashboard() {
                 setShowPremiumModal(false);
               }}
               disabled={!temp}
+              className="px-8 py-2 h-auto rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 text-white font-semibold shadow-lg disabled:opacity-50"
             >
-              Save
+              🚀 Get Premium
             </Button>
           </div>,
         ]}
         centered
-        className="rounded-xl"
+        className="rounded-2xl"
+        width={700}
       >
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6 mt-6">
           {[
             {
               name: "Silver",
               desc: "Basic boost & visibility",
               color: "#9CA3AF",
+              icon: "🥈",
+              features: [
+                "Enhanced visibility",
+                "Basic analytics",
+                "Priority support",
+              ],
             },
             {
               name: "Gold",
               desc: "Priority listing + promotions",
               color: "#F59E0B",
+              icon: "🥇",
+              features: [
+                "Premium placement",
+                "Advanced analytics",
+                "Marketing tools",
+              ],
             },
             {
               name: "Platinum",
               desc: "Top-tier exposure & support",
               color: "#2563EB",
+              icon: "💎",
+              features: [
+                "Maximum exposure",
+                "Dedicated support",
+                "Custom branding",
+              ],
             },
-          ].map(({ name, desc, color }) => (
+          ].map(({ name, desc, color, icon, features }) => (
             <div
               key={name}
               onClick={() => setTemp(name)}
-              className={`p-5 rounded-xl shadow-md hover:shadow-lg cursor-pointer flex items-center justify-between border-l-8 transition duration-300 ${
+              className={`p-6 rounded-2xl shadow-lg hover:shadow-xl cursor-pointer transition-all duration-300 border-2 transform hover:-translate-y-1 ${
                 temp === name
-                  ? "bg-blue-50 ring-2 ring-blue-300 border-blue-500"
-                  : ""
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 ring-4 ring-blue-300 border-blue-500 scale-105"
+                  : "bg-white border-gray-200 hover:border-gray-300"
               }`}
-              style={{ borderColor: color, backgroundColor: "#fff" }}
             >
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900">
-                  {name} Plan
-                </h4>
-                <p className="text-sm text-gray-600">{desc}</p>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">{icon}</span>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900">
+                      {name} Plan
+                    </h4>
+                    <p className="text-gray-600">{desc}</p>
+                  </div>
+                </div>
+                <Badge
+                  count={
+                    <CrownOutlined style={{ color: color, fontSize: "24px" }} />
+                  }
+                  style={{ backgroundColor: "transparent" }}
+                />
               </div>
-              <Badge
-                count={<CrownOutlined style={{ color: color }} />}
-                style={{ backgroundColor: "transparent" }}
-              />
+              <div className="space-y-2">
+                {features.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 text-sm text-gray-700"
+                  >
+                    <span className="text-green-500">✓</span>
+                    {feature}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

@@ -4,10 +4,18 @@ class LoginStore {
   isSeller: boolean = false;
   isBuyer: boolean = true;
   islogin: boolean = false;
+  isHydrated: boolean = false; // Track hydration state
 
   constructor() {
     makeAutoObservable(this);
-    this.loadFromLocalStorage();
+    // Don't load from localStorage immediately to prevent hydration mismatch
+    if (typeof window !== "undefined") {
+      // Use setTimeout to defer loading until after hydration
+      setTimeout(() => {
+        this.loadFromLocalStorage();
+        this.isHydrated = true;
+      }, 0);
+    }
   }
 
   setRole(role: "Seller" | "Buyer") {
@@ -29,17 +37,19 @@ class LoginStore {
       "| islogin:",
       this.islogin,
     );
-    this.saveToLocalStorage()
+    this.saveToLocalStorage();
   }
 
   saveToLocalStorage() {
-    const data = {
-      isSeller: this.isSeller,
-      isBuyer: this.isBuyer,
-      islogin: this.islogin,
-    };
-    localStorage.setItem("loginRole", JSON.stringify(data));
-    console.log("State saved to localStorage:", data);
+    if (typeof window !== "undefined") {
+      const data = {
+        isSeller: this.isSeller,
+        isBuyer: this.isBuyer,
+        islogin: this.islogin,
+      };
+      localStorage.setItem("loginRole", JSON.stringify(data));
+      console.log("State saved to localStorage:", data);
+    }
   }
 
   loadFromLocalStorage() {

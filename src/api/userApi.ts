@@ -75,6 +75,7 @@ export const productCreate = async (data: FormData) => {
     const response = await axiosInstance.post(`/products/create/`, data, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
       },
     });
     return response.data;

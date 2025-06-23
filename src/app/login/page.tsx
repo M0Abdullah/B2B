@@ -18,6 +18,7 @@ const Login = observer(() => {
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [signupLoading, setSignupLoading] = useState(false);
   const [step, setStep] = useState<"email" | "otp">("email");
   const store = loginStore;
   const [messageApi, contextHolder] = message.useMessage();
@@ -35,18 +36,21 @@ const Login = observer(() => {
       handleRoleChange(response.user.status);
       router.push("/maindashboard");
       messageApi.success("Login successful!");
-      localStorage.setItem("access", response.access);
-      localStorage.setItem("refresh", response.refresh);
-      localStorage.setItem("user", response.user.id);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("access", response.access);
+        localStorage.setItem("refresh", response.refresh);
+        localStorage.setItem("user", response.user.id);
+      }
     } catch (error) {
       console.error("Login Error:", error);
       const errorMessage =
         (error &&
           typeof error === "object" &&
           "response" in error &&
-          (error as any).response?.data?.detail) ||
+          (error as { response?: { data?: { detail?: string } } }).response
+            ?.data?.detail) ||
         "Login failed. Please try again.";
-      messageApi.error(errorMessage);
+      messageApi.error(errorMessage as string);
     } finally {
       setLoading(false);
     }
@@ -57,12 +61,20 @@ const Login = observer(() => {
     store.setRole(role as "Seller" | "Buyer");
   };
 
+  const handleSignupNavigation = () => {
+    setSignupLoading(true);
+    // Add delay for better UX
+    setTimeout(() => {
+      router.push("/signup");
+    }, 800);
+  };
+
   const handleSendOtp = async () => {
     if (!email.trim()) return;
 
     setLoading(true);
     try {
-      const response = await otp1(email);
+      await otp1(email);
       message.success("OTP sent to your email!");
       setStep("otp");
     } catch (error) {
@@ -80,7 +92,7 @@ const Login = observer(() => {
 
     setLoading(true);
     try {
-      const response = await otp2(email, otp, password);
+      await otp2(email, otp, password);
       message.success("OTP verified successfully!");
       setResetVisible(false);
       setEmail("");
@@ -102,6 +114,36 @@ const Login = observer(() => {
   return (
     <main className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-300 overflow-hidden">
       {contextHolder}
+
+      {/* Signup Loading Overlay */}
+      {signupLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl max-w-sm mx-4">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              Redirecting to Sign Up...
+            </h3>
+            <p className="text-gray-600 text-center mb-4">
+              Please wait while we prepare the registration form
+            </p>
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+              <div
+                className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
+            </div>
+            <div className="mt-4 text-xs text-gray-500 flex items-center">
+              <span className="mr-1">📝</span>
+              Loading registration form...
+            </div>
+          </div>
+        </div>
+      )}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob top-0 left-0" />
         <div className="absolute w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000 top-20 right-0" />
@@ -174,9 +216,9 @@ const Login = observer(() => {
           </p>
 
           <p className="text-sm text-center text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <a
-              onClick={() => router.push("signup")}
+              onClick={handleSignupNavigation}
               className="text-blue-500 hover:underline cursor-pointer"
             >
               Sign up
