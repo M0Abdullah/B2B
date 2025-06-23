@@ -320,12 +320,12 @@ function ProductDetailsContent() {
                     {seller.country}
                   </p>
                   <p className="flex items-center gap-2 text-gray-700 mb-2">
-                    <Phone size={16} /> {seller.phone}
+                    <Phone size={16} /> {seller.phone_number}
                   </p>
                 </div>
                 <button
                   onClick={() => {
-                    const phoneNumber = seller.phone?.replace(/\D/g, ""); // Remove non-digits
+                    const phoneNumber = seller.phone_number?.replace(/\D/g, ""); // Remove non-digits
                     const whatsappUrl = `https://wa.me/${phoneNumber}`;
                     window.open(whatsappUrl, "_blank");
                   }}

@@ -27,7 +27,7 @@ export default function SignUp() {
     state: "",
     country: "",
     status: "",
-    phone: "",
+    phone_number: "",
   });
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -77,7 +77,7 @@ export default function SignUp() {
 
       setOtpModal(false);
       messageApi.success("OTP verified successfully!");
-      router.push("/maindashboard");
+      router.push("/login");
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.detail ||
@@ -144,7 +144,7 @@ export default function SignUp() {
               { id: "city", label: "City", type: "text" },
               { id: "state", label: "State", type: "text" },
               { id: "country", label: "Country", type: "text" },
-              { id: "phone", label: "Phone", type: "number" },
+              { id: "phone_number", label: "Phone Number", type: "number" },
             ].map(({ id, label, type }) => (
               <div key={id}>
                 <label

@@ -40,6 +40,7 @@ const Login = observer(() => {
         localStorage.setItem("access", response.access);
         localStorage.setItem("refresh", response.refresh);
         localStorage.setItem("user", response.user.id);
+        
       }
     } catch (error) {
       console.error("Login Error:", error);
