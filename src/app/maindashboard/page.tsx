@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-key */
 "use client";
 
@@ -218,7 +219,11 @@ export default function MainDashboard() {
     const getTrending = async () => {
       try {
         const response = await productis_Trending();
-        setTrending(response);
+        if(response.length > 0){
+          setTrending(response);
+        }else{
+          messageApi.info("No trending products found!");
+        }
       } catch (error: any) {
         console.error("Error fetching trending products:", error);
         const errorMessage = error.response.data.details;
@@ -575,4 +580,3 @@ export default function MainDashboard() {
     </div>
   );
 }
-
