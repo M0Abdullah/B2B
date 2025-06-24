@@ -307,7 +307,7 @@ export default function MainDashboard() {
                           key={index}
                           className="text-sm text-gray-600 hover:text-blue-500"
                           onClick={() => {
-                            router.push(`/detailpage?category=${item.name}`);
+                            router.push(`/detailpage?category=${item.id}`);
                           }}
                         >
                           {item.name}
