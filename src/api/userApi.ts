@@ -123,7 +123,7 @@ export const productSubCategory = async () => {
 
 export const productis_Trending = async () => {
   try {
-    const response = await axiosInstance.get(`/products/?is_trending=true`, {
+    const response = await axiosInstance.get(`/categories/?is_trending=true`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
       },
