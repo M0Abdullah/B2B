@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { Suspense } from "react";
@@ -8,7 +7,7 @@ import { Star, Mail, MapPin, CheckCircle, Phone } from "lucide-react";
 import { Button, Skeleton } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { productByCategory, productViewById, reviewProduct } from "@/api/userApi";
+import { productByCategory, reviewProduct } from "@/api/userApi";
 
 // ✅ Child component that uses useSearchParams
 function ProductDetailsContent() {
@@ -39,28 +38,8 @@ function ProductDetailsContent() {
         messageApi.error("Product ID missing!");
         return;
       }
-      if (category) {
-        const response = await productByCategory(category);
-        if (response && Array.isArray(response) && response.length > 0) {
-          // Pick the first product (or match productId from list)
-          const selected = productId
-            ? response.find((p: any) => String(p.id) === String(productId))
-            : response[0];
-          setProductDetails(selected || null);
-        } else {
-          setProductDetails(null);
-        }
-      } else {
-        const response = await productViewById(Number(productId));
-        setProductDetails(response || null);
-      }
-        if(category){
-        const response = await productByCategory(category);
-        setProductDetails(response || null);
-      }else{
-        const response = await productViewById(Number(productId));
-        setProductDetails(response || null);
-      }
+      const response = await productByCategory(category || "");
+      setProductDetails(response || null);
     } catch (error: any) {
       setLoading(false);
       const errorMessage =
@@ -74,7 +53,6 @@ function ProductDetailsContent() {
       setLoading(false);
     }
   };
-
 
   const handleSubmitReview = async () => {
     try {
@@ -448,4 +426,3 @@ export default function DetailPage() {
     </Suspense>
   );
 }
-
