@@ -205,7 +205,7 @@ export default function MainDashboard() {
         const response = await interaction(payload);
         messageApi.success("Interaction created successfully");
         console.log(response);
-      } catch (error) {
+      } catch (error:any) {
         console.error("Error fetching interaction:", error);
         const errorMessage = error.response.data.details;
         messageApi.error(errorMessage);
