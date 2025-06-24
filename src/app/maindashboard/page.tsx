@@ -23,7 +23,7 @@ import { Modal, message, Skeleton } from "antd";
 import { useRouter } from "next/navigation";
 import { CrownOutlined } from "@ant-design/icons";
 import AddModal from "../addmodal";
-import { productis_Trending, productView } from "@/api/userApi";
+import { interaction, productis_Trending, productView } from "@/api/userApi";
 
 type Product = {
   image: string;
@@ -195,10 +195,21 @@ export default function MainDashboard() {
     setFilteredProducts(data);
   };
 
-  const handleLoginFirst = (productId: string) => {
-    if (loginStore.islogin) {
+  const handleLoginFirst = async (productId: string) => {
+    if (loginStore.islogin) { 
       setDetailPageLoading(true);
-      // Add a delay for better UX and show loading
+      const payload ={
+        product: productId,
+      }
+      try {
+        const response = await interaction(payload);
+        messageApi.success("Interaction created successfully");
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching interaction:", error);
+        const errorMessage = error.response.data.details;
+        messageApi.error(errorMessage);
+      }
       setTimeout(() => {
         router.push(`/detailpage?productId=${productId}`);
       }, 800);
