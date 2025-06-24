@@ -54,6 +54,7 @@ export default function Product() {
     description: "",
     price: "",
     category: "",
+    subcategory: "",
     details: "",
     image: null as File | null,
     bussinesstype: "",
@@ -62,6 +63,7 @@ export default function Product() {
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
 
   const [, setSavedProductId] = useState<string | number | null>(null);
 
@@ -128,7 +130,7 @@ export default function Product() {
         messageApi.error("Please enter product price");
         return;
       }
-      if (!forms.category) {
+      if (!forms.category || !forms.subcategory) {
         messageApi.error("Please select a category");
         return;
       }
@@ -142,16 +144,14 @@ export default function Product() {
         messageApi.error("Invalid image file. Please upload again.");
         return;
       }
-
       messageApi.loading("Creating your product...", 0);
 
       const formData = new FormData();
-
-      // Append text fields
       formData.append("name", forms.name.trim());
       formData.append("description", forms.description.trim());
       formData.append("price", forms.price.trim());
-      formData.append("category", forms.category.toString());
+      formData.append("category", forms.category.toString()); // Parent category ID
+      formData.append("subcategory", forms.subcategory.toString()); // Subcategory ID
       formData.append("details", forms.details.trim());
       formData.append("bussinesstype", forms.bussinesstype);
       formData.append("features", forms.features.trim());
@@ -159,7 +159,6 @@ export default function Product() {
       // Append image file with proper handling
       formData.append("image", forms.image, forms.image.name);
 
-      // Debug: Log FormData contents
       console.log("📤 Sending FormData:");
       for (const [key, value] of formData.entries()) {
         if (value instanceof File) {
@@ -176,7 +175,7 @@ export default function Product() {
 
       const productResponse = await productCreate(formData);
 
-      messageApi.destroy(); // Clear loading message
+      messageApi.destroy(); 
 
       const productId = productResponse.id;
       if (!productId) {
@@ -192,23 +191,23 @@ export default function Product() {
         description: "",
         price: "",
         category: "",
+        subcategory: "",
         details: "",
         image: null,
         bussinesstype: "",
         features: "",
       });
+      setSelectedCategoryName(""); 
 
-      // Reset image preview and file input
       setImagePreview(null);
       const fileInput = document.getElementById(
         "image-upload",
       ) as HTMLInputElement;
       if (fileInput) fileInput.value = "";
     } catch (error: unknown) {
-      messageApi.destroy(); // Clear loading message
+      messageApi.destroy(); 
       console.error("❌ Error submitting product:", error);
 
-      // Handle specific error messages
       const apiError = error as {
         response?: { data?: { image?: string[]; [key: string]: unknown } };
       };
@@ -426,7 +425,7 @@ export default function Product() {
                     onClick={() => setShowCategoryModal(true)}
                     className="h-12 rounded-xl border-2 border-dashed border-purple-300 hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 text-purple-600 font-semibold"
                   >
-                    {forms.category || "🎯 Select Product Category"}
+                    {selectedCategoryName || "🎯 Select Product Category"}
                   </Button>
                 </div>
               </Col>
@@ -535,7 +534,17 @@ export default function Product() {
                       type="default"
                       block
                       onClick={() => {
-                        setForms({ ...forms, category: String(sub.id) });
+                        console.log("🔖 Subcategory selected:", {
+                          id: sub.id,
+                          name: sub.name,
+                          category: sub.category
+                        });
+                        setForms({ 
+                          ...forms, 
+                          category: String(sub.category), 
+                          subcategory: String(sub.id) 
+                        });
+                        setSelectedCategoryName(sub.name); 
                         setShowCategoryModal(false);
                       }}
                       className="text-left justify-start rounded-lg hover:bg-white hover:shadow-md transition-all duration-300 border-gray-200 hover:border-purple-300"
