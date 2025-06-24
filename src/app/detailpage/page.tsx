@@ -39,11 +39,16 @@ function ProductDetailsContent() {
 
       if (category) {
         const response = await productByCategory(Number(category));
-        setProductDetails(response || null);
+        if (Array.isArray(response) && response.length > 0) {
+          setProductDetails(response[0]); // ✅ Only use first product from category list
+        } else {
+          setProductDetails(null); // or show empty
+        }
       } else {
         const response = await productViewById(Number(productId));
         setProductDetails(response || null);
       }
+      
     } catch (error: any) {
       setLoading(false);
       const errorMessage =
@@ -284,7 +289,6 @@ function ProductDetailsContent() {
           {seller && (
             <div className="bg-white shadow-xl rounded-xl p-6">
               <div className="flex flex-col items-center text-center">
-                <div className="w-32 h-32 bg-gray-300 rounded-full mb-4" />
                 <div className="flex items-center gap-2">
                   <h3 className="text-2xl font-semibold text-gray-800">
                     {seller.username}
