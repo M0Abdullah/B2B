@@ -39,7 +39,22 @@ function ProductDetailsContent() {
         messageApi.error("Product ID missing!");
         return;
       }
-      if(category){
+      if (category) {
+        const response = await productByCategory(category);
+        if (response && Array.isArray(response) && response.length > 0) {
+          // Pick the first product (or match productId from list)
+          const selected = productId
+            ? response.find((p: any) => String(p.id) === String(productId))
+            : response[0];
+          setProductDetails(selected || null);
+        } else {
+          setProductDetails(null);
+        }
+      } else {
+        const response = await productViewById(Number(productId));
+        setProductDetails(response || null);
+      }
+        if(category){
         const response = await productByCategory(category);
         setProductDetails(response || null);
       }else{
@@ -59,6 +74,7 @@ function ProductDetailsContent() {
       setLoading(false);
     }
   };
+
 
   const handleSubmitReview = async () => {
     try {
