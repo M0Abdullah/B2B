@@ -327,21 +327,20 @@ function ProductDetailsContent() {
                   </p>
                 </div>
                 <button
-  onClick={() => {
-    let phoneNumber = seller.phone_number?.replace(/\D/g, ""); // Remove non-digits
+                  onClick={() => {
+                    let phoneNumber = seller.phone_number?.replace(/\D/g, ""); // Remove non-digits
 
-    if (phoneNumber?.startsWith("0")) {
-      phoneNumber = "92" + phoneNumber.slice(1);
-    }
+                    if (phoneNumber?.startsWith("0")) {
+                      phoneNumber = "92" + phoneNumber.slice(1);
+                    }
 
-    const whatsappUrl = `https://wa.me/${phoneNumber}`;
-    window.open(whatsappUrl, "_blank");
-  }}
-  className="mt-6 bg-blue-600 cursor-pointer text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
->
-  Contact Seller
-</button>
-
+                    const whatsappUrl = `https://wa.me/${phoneNumber}`;
+                    window.open(whatsappUrl, "_blank");
+                  }}
+                  className="mt-6 bg-blue-600 cursor-pointer text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+                >
+                  Contact Seller
+                </button>
 
                 {/* Enhanced Contact Guidelines */}
                 <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
