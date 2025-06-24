@@ -120,3 +120,16 @@ export const productSubCategory = async () => {
     throw error;
   }
 };
+
+export const productis_Trending = async () => {
+  try {
+    const response = await axiosInstance.get(`/products/?is_trending=true`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
