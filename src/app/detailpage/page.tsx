@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { Suspense } from "react";
 import { message } from "antd";
@@ -6,13 +8,14 @@ import { Star, Mail, MapPin, CheckCircle, Phone } from "lucide-react";
 import { Button, Skeleton } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { productViewById, reviewProduct } from "@/api/userApi";
+import { productByCategory, productViewById, reviewProduct } from "@/api/userApi";
 
 // ✅ Child component that uses useSearchParams
 function ProductDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
+  const category = searchParams.get("category");
 
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
@@ -36,8 +39,13 @@ function ProductDetailsContent() {
         messageApi.error("Product ID missing!");
         return;
       }
-      const response = await productViewById(Number(productId));
-      setProductDetails(response || null);
+      if(category){
+        const response = await productByCategory(category);
+        setProductDetails(response || null);
+      }else{
+        const response = await productViewById(Number(productId));
+        setProductDetails(response || null);
+      }
     } catch (error: any) {
       setLoading(false);
       const errorMessage =
@@ -424,3 +432,4 @@ export default function DetailPage() {
     </Suspense>
   );
 }
+
