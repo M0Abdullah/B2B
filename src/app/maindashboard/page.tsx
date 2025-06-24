@@ -22,7 +22,7 @@ import { Modal, message, Skeleton } from "antd";
 import { useRouter } from "next/navigation";
 import { CrownOutlined } from "@ant-design/icons";
 import AddModal from "../addmodal";
-import { productView } from "@/api/userApi";
+import { productis_Trending, productView } from "@/api/userApi";
 
 type Product = {
   image: string;
@@ -56,6 +56,7 @@ export default function MainDashboard() {
   const [temp, setTemp] = useState<string>("");
   const [addModal, setAddModal] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [trending, setTrending] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -213,11 +214,24 @@ export default function MainDashboard() {
     setShowPremiumModal(false);
   };
 
+  useEffect(() => {
+    const getTrending = async () => {
+      try {
+        const response = await productis_Trending();
+        setTrending(response);
+      } catch (error: any) {
+        console.error("Error fetching trending products:", error);
+        const errorMessage = error.response.data.details;
+        messageApi.error(errorMessage);
+      }
+    };
+
+    getTrending();
+  }, []);
+
   return (
     <div className="bg-gray-100 min-h-screen relative">
       {contextHolder}
-
-      {/* Detail Page Loading Overlay */}
       {detailPageLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl max-w-sm mx-4">
@@ -281,46 +295,20 @@ export default function MainDashboard() {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 justify-between ">
                   <div className="flex flex-col gap-2 cursor-pointer">
-                    <li
-                      className="text-sm text-gray-600 hover:text-blue-500"
-                      onClick={() =>
-                        messageApi.info("This is under development")
-                      }
-                    >
-                      Kitchen Appliances
-                    </li>
-                    <li
-                      className="text-sm text-gray-600 hover:text-blue-500"
-                      onClick={() =>
-                        messageApi.info("This is under development")
-                      }
-                    >
-                      Cookware & Bakeware
-                    </li>
-                    <li
-                      className="text-sm text-gray-600 hover:text-blue-500"
-                      onClick={() =>
-                        messageApi.info("This is under development")
-                      }
-                    >
-                      Cutlery & Utensils
-                    </li>
-                    <li
-                      className="text-sm text-gray-600 hover:text-blue-500"
-                      onClick={() =>
-                        messageApi.info("This is under development")
-                      }
-                    >
-                      Kitchen Storage
-                    </li>
-                    <li
-                      className="text-sm text-gray-600 hover:text-blue-500"
-                      onClick={() =>
-                        messageApi.info("This is under development")
-                      }
-                    >
-                      Dining & Serveware
-                    </li>
+                 
+                    {trending.map((item: any, index: number) => {
+                      return (
+                        <li
+                          key={index}
+                          className="text-sm text-gray-600 hover:text-blue-500"
+                          onClick={() => {
+                            router.push(`/detailpage?productId=${item.id}`);
+                          }}
+                        >
+                          {item.name}
+                        </li>
+                      );
+                    })}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -587,3 +575,4 @@ export default function MainDashboard() {
     </div>
   );
 }
+
