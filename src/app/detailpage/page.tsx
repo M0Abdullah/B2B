@@ -38,7 +38,7 @@ function ProductDetailsContent() {
       }
 
       if (category) {
-        const response = await productByCategory(category || "");
+        const response = await productByCategory(Number(category));
         setProductDetails(response || null);
       } else {
         const response = await productViewById(Number(productId));
