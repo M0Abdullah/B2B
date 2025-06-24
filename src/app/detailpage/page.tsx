@@ -8,21 +8,22 @@ import { Star, Mail, MapPin, CheckCircle, Phone } from "lucide-react";
 import { Button, Skeleton } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { productByCategory, reviewProduct } from "@/api/userApi";
+import {
+  productByCategory,
+  reviewProduct,
+  productViewById,
+} from "@/api/userApi";
 
-// ✅ Child component that uses useSearchParams
 function ProductDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("productId");
   const category = searchParams.get("category");
-
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
   const [productDetails, setProductDetails] = useState<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(true);
-
   const [review, setReview] = useState({ rating: 5, comment: "" });
 
   const fetchProductDetails = async () => {
@@ -35,12 +36,14 @@ function ProductDetailsContent() {
         router.push("/login");
         return;
       }
-      if (!productId) {
-        messageApi.error("Product ID missing!");
-        return;
+
+      if (category) {
+        const response = await productByCategory(category || "");
+        setProductDetails(response || null);
+      } else {
+        const response = await productViewById(Number(productId));
+        setProductDetails(response || null);
       }
-      const response = await productByCategory(category || "");
-      setProductDetails(response || null);
     } catch (error: any) {
       setLoading(false);
       const errorMessage =
@@ -64,7 +67,6 @@ function ProductDetailsContent() {
         router.push("/login");
         return;
       }
-
       const formData = new FormData();
       formData.append("product", productId || "");
       formData.append("rating", String(review.rating));
@@ -74,7 +76,7 @@ function ProductDetailsContent() {
 
       messageApi.success("Review submitted successfully!");
       setReview({ rating: 5, comment: "" });
-      fetchProductDetails(); // reload updated reviews
+      fetchProductDetails();
     } catch (error) {
       console.error("Review error:", error);
       messageApi.error("Failed to submit review.");
@@ -417,8 +419,6 @@ function ProductDetailsContent() {
     </div>
   );
 }
-
-// ✅ Main export: only wraps child in <Suspense>
 export default function DetailPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
