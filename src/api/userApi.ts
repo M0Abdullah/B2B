@@ -148,3 +148,30 @@ export const productis_Trending = async () => {
     throw error;
   }
 };
+
+export const interaction = async (payload: any) => {
+  try {
+    const response = await axiosInstance.post(`/interactions/create/`, payload, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const interactionView = async () => {
+  try {
+    const response = await axiosInstance.get(`/interactions/`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
