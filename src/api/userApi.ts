@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "./axiosInstance";
 
 export const registerUser = async (userData: any) => {
@@ -83,6 +84,20 @@ export const productCreate = async (data: FormData) => {
     throw error;
   }
 };
+export const productByCategory = async (id: number) => {
+  try {
+    const response = await axiosInstance.get(`/products/?category=${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 export const reviewProduct = async (data: FormData) => {
   try {
     const response = await axiosInstance.post(`/reviews/`, data, {
