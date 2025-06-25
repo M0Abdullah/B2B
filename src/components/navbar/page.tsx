@@ -182,14 +182,26 @@ const Navbar = ({
                 </li>
               )}
 
-              <li>
-                <button
-                  onClick={handleLogin}
-                  className={getNavItemClasses("/login")}
-                >
-                  Signout
-                </button>
-              </li>
+              {
+  loginStore.isSeller ? (
+    <li>
+      <button
+        onClick={handleLogin}
+        className={getNavItemClasses("/login")}
+      >
+        Sign Out
+      </button>
+    </li>
+  ) : (
+    <li>
+      <button
+        onClick={handleLogin}
+        className={getNavItemClasses("/login")}
+      >
+        Login
+      </button>
+    </li>
+  )}
 
               {loginStore.isSeller && (
                 <li>
