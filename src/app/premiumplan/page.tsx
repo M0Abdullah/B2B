@@ -22,6 +22,13 @@ const PremiumPlan = () => {
 
       <div className="py-16 px-4">
         <div className="text-center mb-16">
+         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+  <strong className="font-bold text-2xl">Notice:</strong>
+  <span className="block sm:inline text-lg ml-2">
+    This is under development – Premium and Payment Gateway. Please wait...
+  </span>
+</div>
+
           <h1 className="text-5xl font-bold mb-4 text-gray-800">
             Choose Your <span className="text-blue-600">Premium</span> Plan
           </h1>
