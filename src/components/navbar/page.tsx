@@ -55,7 +55,7 @@ const Navbar = ({
   const handleLogin = () =>
     
     handleNavigation("/login", "Redirecting to Login...");
-  localStorage.clear();
+  loginStore.reset();
   const addModalOpen = () => setAddModal(true);
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
