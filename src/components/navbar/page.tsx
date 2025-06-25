@@ -185,7 +185,7 @@ const Navbar = ({
                   onClick={handleLogin}
                   className={getNavItemClasses("/login")}
                 >
-                  Login
+                  Signout
                 </button>
               </li>
 
