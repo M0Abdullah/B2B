@@ -53,7 +53,9 @@ const Navbar = ({
 
   const handlePremiumSelect = () => setPremium(true);
   const handleLogin = () =>
+    
     handleNavigation("/login", "Redirecting to Login...");
+  localStorage.clear();
   const addModalOpen = () => setAddModal(true);
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
