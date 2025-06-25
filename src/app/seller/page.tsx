@@ -99,12 +99,26 @@ export default function Seller() {
             </span>
           </div>
 
+          {/* Number of Interactions Badge */}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full shadow">
+              {item.number_of_interactions} {item.number_of_interactions === 1 ? 'Interaction' : 'Interactions'}
+            </span>
+          </div>
+
+          {/* Last Interaction Timestamp */}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full">
+              Last Interacted: {item.last_interacted_at ? new Date(item.last_interacted_at).toLocaleString() : 'N/A'}
+            </span>
+          </div>
+
           <div className="flex flex-wrap gap-2 mt-3">
             <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
               Product ID: {item.product}
             </span>
             <span className="inline-block bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">
-              {new Date(item.timestamp).toLocaleString()}
+              {item.last_interacted_at ? new Date(item.last_interacted_at).toLocaleString() : 'N/A'}
             </span>
           </div>
         </div>
