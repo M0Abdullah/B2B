@@ -14,6 +14,7 @@ This is a B2B platform built with **Next.js**, **TypeScript**, **Tailwind CSS**,
 - ✅ Review and rating system
 - ✅ Premium plan selection with Stripe integration
 - ✅ Responsive layout
+- ✅ ShadCN for better UserInterface
 
 ---
 
