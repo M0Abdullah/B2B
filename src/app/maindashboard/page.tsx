@@ -226,6 +226,8 @@ export default function MainDashboard() {
     setShowPremiumModal(false);
   };
 
+  if(loginStore.islogin){
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const getTrending = async () => {
       try {
@@ -244,6 +246,7 @@ export default function MainDashboard() {
 
     getTrending();
   }, []);
+}
 
   return (
     <div className="bg-gray-100 min-h-screen relative">
