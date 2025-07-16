@@ -222,25 +222,7 @@ export default function Product() {
     }
   };
 
-  // const handleReviewSubmit = async () => {
-  //   try {
-  //     if (!savedProductId) {
-  //       messageApi.error("No product found to review.");
-  //       return;
-  //     }
 
-  //     const reviewFormData = new FormData();
-  //     reviewFormData.append("product", savedProductId.toString());
-  //     reviewFormData.append("rating", String(reviewData.rating));
-  //     reviewFormData.append("comment", reviewData.comment);
-
-  //     messageApi.success("Review submitted!");
-  //     setReviewData({ rating: 5, comment: "" });
-  //   } catch (err) {
-  //     console.error("❌ Review submit error:", err);
-  //     messageApi.error("Failed to submit review.");
-  //   }
-  // };
 
   useEffect(() => {
     const fetchCategorys = async () => {
@@ -336,6 +318,9 @@ export default function Product() {
                     </p>
                     <p className="text-sm text-gray-500">
                       Supports: JPEG, PNG, WebP (Max: 5MB)
+                    </p>
+                    <p className="text-xs text-purple-500 font-medium mt-2 bg-purple-50 px-3 py-1 rounded-full inline-block">
+                      ✨ You can add only one image per product
                     </p>
                   </div>
                 </div>
@@ -444,7 +429,6 @@ export default function Product() {
                       setForms({ ...forms, bussinesstype: value })
                     }
                   >
-                    <Select.Option value="importer">📥 Importer</Select.Option>
                     <Select.Option value="exporter">📤 Exporter</Select.Option>
                     <Select.Option value="wholesaler">
                       🏪 Wholesaler
@@ -579,28 +563,7 @@ export default function Product() {
           </div>
         }
         onCancel={() => setShowPremiumModal(false)}
-        footer={[
-          <div key="footer-buttons" className="flex justify-center gap-4 mt-6">
-            <Button
-              key="cancel"
-              onClick={() => setShowPremiumModal(false)}
-              className="px-8 py-2 h-auto rounded-xl border-2 border-gray-300 hover:border-gray-400 font-semibold"
-            >
-              Maybe Later
-            </Button>
-            <Button
-              key="save"
-              onClick={() => {
-                handlePremiumSelect(temp);
-                setShowPremiumModal(false);
-              }}
-              disabled={!temp}
-              className="px-8 py-2 h-auto rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 text-white font-semibold shadow-lg disabled:opacity-50"
-            >
-              🚀 Get Premium
-            </Button>
-          </div>,
-        ]}
+        footer={null}
         centered
         className="rounded-2xl"
         width={700}
@@ -643,7 +606,10 @@ export default function Product() {
           ].map(({ name, desc, color, icon, features }) => (
             <div
               key={name}
-              onClick={() => setTemp(name)}
+              onClick={() => {
+                setTemp(name);
+                handlePremiumSelect(name);
+              }}
               className={`p-6 rounded-2xl shadow-lg hover:shadow-xl cursor-pointer transition-all duration-300 border-2 transform hover:-translate-y-1 ${
                 temp === name
                   ? "bg-gradient-to-r from-blue-50 to-indigo-50 ring-4 ring-blue-300 border-blue-500 scale-105"
