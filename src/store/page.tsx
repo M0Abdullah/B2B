@@ -28,7 +28,6 @@ class LoginStore {
       this.isBuyer = true;
       this.islogin = true;
     }
-    console.log("Role set to:", role);
     console.log(
       "Current State => isSeller:",
       this.isSeller,
@@ -84,6 +83,8 @@ class LoginStore {
     this.isSeller = false;
     this.isBuyer = true;
     this.islogin = false;
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
     console.log("Store reset to default values");
     this.saveToLocalStorage();
   }
