@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
-import { interactionView, productView } from "@/api/userApi";
+import { interactionView, productView, productViewSeller, productViewSellerDelete, productViewSellerUpdate } from "@/api/userApi";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -38,7 +38,7 @@ export default function Seller() {
 
   const getSellerProductsData = async () => {
     try {
-      const response = await productView();
+      const response = await productViewSeller();
       console.log("Seller Products:", response);
       setProducts(response || []);
     } catch (error) {
@@ -56,38 +56,39 @@ export default function Seller() {
       category: product.category.toString(),
       subcategory: product.subcategory.toString()
     });
+
   };
 
-  // const handleUpdateProduct = async () => {
-  //   if (!editingProduct) return;
+  const handleUpdateProduct = async (id: number) => {
+    if (!id) return;
     
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("name", editForm.name);
-  //     formData.append("description", editForm.description);
-  //     formData.append("price", editForm.price);
-  //     formData.append("features", editForm.features);
-  //     formData.append("category", editForm.category);
-  //     formData.append("subcategory", editForm.subcategory);
+    try {
+      const formData = new FormData();
+      formData.append("name", editForm.name);
+      formData.append("description", editForm.description);
+      formData.append("price", editForm.price);
+      formData.append("features", editForm.features);
+      formData.append("category", editForm.category);
 
-  //     await updateProduct(editingProduct.id, formData);
-  //     setEditingProduct(null);
-  //     getSellerProductsData(); // Refresh products
-  //   } catch (error) {
-  //     console.error("Error updating product:", error);
-  //   }
-  // };
 
-  // const handleDeleteProduct = async (productId: number) => {
-  //   if (confirm("Are you sure you want to delete this product?")) {
-  //     try {
-  //       await deleteProduct(productId);
-  //       getSellerProductsData(); // Refresh products
-  //     } catch (error) {
-  //       console.error("Error deleting product:", error);
-  //     }
-  //   }
-  // };
+      await productViewSellerUpdate(id, formData);
+      setEditingProduct(null);
+      getSellerProductsData(); // Refresh products
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: number) => {
+    if (confirm("Are you sure you want to delete this product?")) {
+      try {
+        await productViewSellerDelete(productId);
+        getSellerProductsData(); // Refresh products
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
+    }
+  };
 
   useEffect(() => {
     getInteraction();
@@ -276,7 +277,7 @@ export default function Seller() {
                       ✏️ Edit
                     </button>
                     <button
-                      // onClick={() => handleDeleteProduct(product.id)}
+                      onClick={() => handleDeleteProduct(product.id)}
                       className="flex-1 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-3 rounded-lg transition duration-200"
                     >
                       🗑️ Delete
@@ -352,7 +353,7 @@ export default function Seller() {
             
             <div className="flex gap-3 mt-6">
               <button
-                // onClick={handleUpdateProduct}
+                onClick={() => handleUpdateProduct(editingProduct.id)}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
               >
                 Update Product
