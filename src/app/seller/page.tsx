@@ -1,15 +1,50 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
-import { interactionView, productView, productViewSeller, productViewSellerDelete, productViewSellerUpdate } from "@/api/userApi";
+import { interactionView, productViewSeller, productViewSellerDelete, productViewSellerUpdate } from "@/api/userApi";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+// TypeScript interfaces
+interface Buyer {
+  username: string;
+  email: string;
+  phone_number: string;
+  city: string;
+  state: string;
+  country: string;
+}
+
+interface Interaction {
+  id: number;
+  buyer: Buyer;
+  product: number;
+  number_of_interactions: number;
+  last_interacted_at: string;
+}
+
+interface Review {
+  rating: number;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  features: string;
+  category: number;
+  subcategory: number;
+  image: string;
+  created_at: string;
+  reviews: Review[];
+}
 
 export default function Seller() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [interactions, setInteractions] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [interactions, setInteractions] = useState<Interaction[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editForm, setEditForm] = useState({
     name: "",
     description: "",
@@ -46,17 +81,16 @@ export default function Seller() {
     }
   };
 
-  const handleEditProduct = (product: any) => {
+  const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setEditForm({
       name: product.name,
       description: product.description,
-      price: product.price,
+      price: product.price.toString(),
       features: product.features,
       category: product.category.toString(),
       subcategory: product.subcategory.toString()
     });
-
   };
 
   const handleUpdateProduct = async (id: number) => {
@@ -69,7 +103,6 @@ export default function Seller() {
       formData.append("price", editForm.price);
       formData.append("features", editForm.features);
       formData.append("category", editForm.category);
-
 
       await productViewSellerUpdate(id, formData);
       setEditingProduct(null);
@@ -143,7 +176,7 @@ export default function Seller() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {interactions.length > 0 ? (
-            interactions.map((item: any) => (
+            interactions.map((item: Interaction) => (
               <div
                 key={item.id}
                 className="bg-white border border-blue-100 rounded-2xl shadow hover:shadow-lg transition duration-300 p-6 relative group"
@@ -214,7 +247,7 @@ export default function Seller() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.length > 0 ? (
-            products.map((product: any) => (
+            products.map((product: Product) => (
               <div
                 key={product.id}
                 className="bg-white border border-green-100 rounded-2xl shadow hover:shadow-lg transition duration-300 p-6 relative group"
@@ -256,7 +289,7 @@ export default function Seller() {
                     </div>
                     {product.reviews.length > 0 && (
                       <div className="text-xs text-gray-500">
-                        Avg Rating: {(product.reviews.reduce((acc: number, review: any) => acc + review.rating, 0) / product.reviews.length).toFixed(1)}/5
+                        Avg Rating: {(product.reviews.reduce((acc: number, review: Review) => acc + review.rating, 0) / product.reviews.length).toFixed(1)}/5
                       </div>
                     )}
                   </div>
@@ -346,9 +379,6 @@ export default function Seller() {
                   rows={2}
                 />
               </div>
-              
-             
-             
             </div>
             
             <div className="flex gap-3 mt-6">
