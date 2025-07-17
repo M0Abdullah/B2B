@@ -184,7 +184,7 @@ export default function Product() {
       }
 
       messageApi.success("🎉 Product created successfully!");
-
+      router.push("/");
       // Reset form
       setForms({
         name: "",
