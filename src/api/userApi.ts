@@ -58,6 +58,45 @@ export const productView = async () => {
     throw error;
   }
 };
+export const productViewSeller = async () => {
+  try {
+    const response = await axiosInstance.get("/products/", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const productViewSellerUpdate = async (id: number, formData: FormData) => {
+  try {
+    const response = await axiosInstance.put(`/products/${id}/update/`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+export const productViewSellerDelete = async (id: number) => {
+  try {
+    const response = await axiosInstance.delete(`/products/${id}/delete/`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 
 export const productViewById = async (id: number) => {
   try {
