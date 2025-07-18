@@ -53,6 +53,12 @@ export default function Seller() {
     category: "",
     subcategory: ""
   });
+  
+  // New state for loading and confirmation modals
+  const [updatingProductId, setUpdatingProductId] = useState<number | null>(null);
+  const [deletingProductId, setDeletingProductId] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
   const handleProducts = () => {
     setIsLoading(true);
@@ -96,6 +102,8 @@ export default function Seller() {
   const handleUpdateProduct = async (id: number) => {
     if (!id) return;
     
+    setUpdatingProductId(id);
+    
     try {
       const formData = new FormData();
       formData.append("name", editForm.name);
@@ -109,18 +117,36 @@ export default function Seller() {
       getSellerProductsData(); // Refresh products
     } catch (error) {
       console.error("Error updating product:", error);
+    } finally {
+      setUpdatingProductId(null);
     }
   };
 
-  const handleDeleteProduct = async (productId: number) => {
-    if (confirm("Are you sure you want to delete this product?")) {
-      try {
-        await productViewSellerDelete(productId);
-        getSellerProductsData(); // Refresh products
-      } catch (error) {
-        console.error("Error deleting product:", error);
-      }
+  const handleDeleteClick = (product: Product) => {
+    setProductToDelete(product);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!productToDelete) return;
+    
+    setDeletingProductId(productToDelete.id);
+    
+    try {
+      await productViewSellerDelete(productToDelete.id);
+      getSellerProductsData(); // Refresh products
+      setShowDeleteModal(false);
+      setProductToDelete(null);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    } finally {
+      setDeletingProductId(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setProductToDelete(null);
   };
 
   useEffect(() => {
@@ -305,15 +331,31 @@ export default function Seller() {
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={() => handleEditProduct(product)}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-3 rounded-lg transition duration-200"
+                      disabled={updatingProductId === product.id}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold py-2 px-3 rounded-lg transition duration-200 flex items-center justify-center"
                     >
-                      ✏️ Edit
+                      {updatingProductId === product.id ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Updating...
+                        </>
+                      ) : (
+                        "✏️ Edit"
+                      )}
                     </button>
                     <button
-                      onClick={() => handleDeleteProduct(product.id)}
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-3 rounded-lg transition duration-200"
+                      onClick={() => handleDeleteClick(product)}
+                      disabled={deletingProductId === product.id}
+                      className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-sm font-semibold py-2 px-3 rounded-lg transition duration-200 flex items-center justify-center"
                     >
-                      🗑️ Delete
+                      {deletingProductId === product.id ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Deleting...
+                        </>
+                      ) : (
+                        "🗑️ Delete"
+                      )}
                     </button>
                   </div>
                 </div>
@@ -384,13 +426,68 @@ export default function Seller() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => handleUpdateProduct(editingProduct.id)}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                disabled={updatingProductId === editingProduct.id}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center"
               >
-                Update Product
+                {updatingProductId === editingProduct.id ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Updating...
+                  </>
+                ) : (
+                  "Update Product"
+                )}
               </button>
               <button
                 onClick={() => setEditingProduct(null)}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                disabled={updatingProductId === editingProduct.id}
+                className="flex-1 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && productToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-md mx-4 w-full">
+            <div className="text-center mb-6">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                Delete Product
+              </h3>
+              <p className="text-sm text-gray-600">
+                Are you sure you want to delete <span className="font-semibold text-gray-800">"{productToDelete.name}"</span>? 
+                This action cannot be undone.
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={deletingProductId === productToDelete.id}
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center"
+              >
+                {deletingProductId === productToDelete.id ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete Product"
+                )}
+              </button>
+              <button
+                onClick={handleDeleteCancel}
+                disabled={deletingProductId === productToDelete.id}
+                className="flex-1 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
               >
                 Cancel
               </button>
