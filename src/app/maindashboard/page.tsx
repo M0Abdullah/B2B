@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Badge } from "antd";
-import SearchFilter from "../searchfilter/page";
+import SearchFilter from "@/components/SearchFilter";
 import Navbar from "../../components/navbar/page";
 import Seller from "../seller/page";
 import loginStore from "@/store/page";
@@ -64,6 +64,7 @@ export default function MainDashboard() {
     islogin: loginStore.islogin
   });
   const [isStateChanging, setIsStateChanging] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -138,6 +139,12 @@ export default function MainDashboard() {
   useEffect(() => {}, []);
 
   const applyFilters = () => {
+    // Only allow filtering for buyers
+    if (!storeState.isBuyer) {
+      messageApi.info("Please login as a buyer to use search and filters.");
+      return;
+    }
+    
     if (
       !title &&
       !category &&
@@ -145,7 +152,8 @@ export default function MainDashboard() {
       !material &&
       !feature &&
       !priceRange &&
-      includeDesc === ""
+      includeDesc === "" &&
+      !searchQuery
     ) {
       messageApi.info("Please apply at least one filter.");
       return;
@@ -159,6 +167,11 @@ export default function MainDashboard() {
     const results = data.filter((product) => {
       const rawPrice = typeof product.price === "string" ? product.price : "0";
       const price = parseFloat(rawPrice.replace(/[₹\/ ,]/g, ""));
+
+      const matchesSearchQuery =
+        searchQuery === "" ||
+        (product.name &&
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
       const matchesTitle =
         title === "" ||
@@ -207,6 +220,7 @@ export default function MainDashboard() {
         })();
 
       return (
+        matchesSearchQuery &&
         matchesTitle &&
         matchesCategory &&
         matchesSeller &&
@@ -221,6 +235,22 @@ export default function MainDashboard() {
   };
 
   const resetFilters = () => {
+    // Only allow reset for buyers
+    if (!storeState.isBuyer) {
+      messageApi.info("Please login as a buyer to use search and filters.");
+      return;
+    }
+    
+    if(title === "" && category === "" && seller === "" && material === "" && feature === "" && priceRange === "" && includeDesc === "" && searchQuery === ""){
+      messageApi.info("Please apply at least one filter.");
+      return;
+    }
+    setLoading(true);
+    setSkeletonLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setSkeletonLoading(false);
+    }, 2000);
     setTitle("");
     setCategory("");
     setSeller("");
@@ -228,6 +258,7 @@ export default function MainDashboard() {
     setFeature("");
     setPriceRange("");
     setIncludeDesc("");
+    setSearchQuery("");
     setFilteredProducts(data);
   };
 
@@ -286,6 +317,24 @@ export default function MainDashboard() {
       setTrending([]);
     }
   }, [storeState.islogin]);
+
+  // Auto-filter products when search query changes (only for buyers)
+  useEffect(() => {
+    if (!storeState.isBuyer) {
+      // If not a buyer, don't apply search filtering
+      return;
+    }
+    
+    if (searchQuery.trim() === "") {
+      setFilteredProducts(data);
+    } else {
+      const results = data.filter((product) => {
+        return product.name && 
+               product.name.toLowerCase().includes(searchQuery.toLowerCase());
+      });
+      setFilteredProducts(results);
+    }
+  }, [searchQuery, data, storeState.isBuyer]);
 
   return (
     <div className="bg-gray-100 min-h-screen relative">
@@ -358,7 +407,11 @@ export default function MainDashboard() {
         setAddModal={setAddModal}
       />
       <ToastContainer position="top-center" autoClose={3000} />
-      <SearchFilter />
+      <SearchFilter 
+        value={searchQuery} 
+        setValue={setSearchQuery} 
+        onSearch={applyFilters}
+      />
 
       {!isHydrated ? (
         <div className="flex justify-center items-center h-64">
@@ -369,46 +422,108 @@ export default function MainDashboard() {
         </div>
       ) : storeState.isBuyer ? (
         <div className="flex flex-col md:flex-row gap-6 mt-6">
-          <div className="w-full md:w-[300px]">
-            <h2 className="text-xl font-semibold mb-2 text-gray-800 p-4">
-              Buckets
-            </h2>
+          <div className="w-full md:w-[320px]">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-xl p-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <span className="text-2xl">📊</span>
+                Smart Filters
+              </h2>
+              <p className="text-blue-100 text-sm mt-1">Discover trending categories</p>
+            </div>
+            
             <Accordion
               type="single"
               collapsible
-              className="rounded border bg-white shadow"
+              className="rounded-b-xl border-0 bg-white shadow-xl"
             >
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="px-4 text-lg font-semibold py-3 cursor-pointer ">
-                  Top Trending Categories
+              <AccordionItem value="item-1" className="border-0">
+                <AccordionTrigger className="px-6 py-4 text-lg font-semibold cursor-pointer hover:bg-blue-50 transition-colors duration-200 rounded-t-xl">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🔥</span>
+                    <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                      Top Trending Categories
+                    </span>
+                  </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-4 justify-between ">
-                  <div className="flex flex-col gap-2 cursor-pointer">
-                 
-                    {trending.map((item: any, index: number) => {
-                      return (
-                        <li
-                          key={index}
-                          className="text-sm text-gray-600 hover:text-blue-500"
-                          onClick={() => {
-                            router.push(`/detailpage?category=${item.id}`);
-                          }}
-                        >
-                          {item.name}
-                        </li>
-                      );
-                    })}
+                <AccordionContent className="px-6 pb-4">
+                  <div className="space-y-3">
+                    {trending.length > 0 ? (
+                      trending.map((item: any, index: number) => {
+                        return (
+                          <div
+                            key={index}
+                            className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 cursor-pointer transition-all duration-200 border border-transparent hover:border-blue-200"
+                            onClick={() => {
+                              router.push(`/detailpage?category=${item.id}`);
+                            }}
+                          >
+                            <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors duration-200">
+                                {item.name}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Trending now
+                              </p>
+                            </div>
+                            <div className="flex-shrink-0">
+                              <span className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                →
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="text-center py-6">
+                        <div className="text-4xl mb-2">📈</div>
+                        <p className="text-gray-500 text-sm">No trending categories yet</p>
+                        <p className="text-gray-400 text-xs mt-1">Check back later for updates</p>
+                      </div>
+                    )}
                   </div>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+            
+            {/* Additional Info Card */}
+            <div className="mt-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 border border-green-200">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">💡</span>
+                <h3 className="font-semibold text-gray-800">Quick Tips</h3>
+              </div>
+              <ul className="text-xs text-gray-600 space-y-1">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                  Click on trending categories to explore
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                  Use filters to find specific products
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                  Save your favorite searches
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="flex-1">
-            <div className="bg-white p-4 rounded shadow mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Advanced Filters
-              </h3>
+            <div className="bg-gradient-to-r from-white to-gray-50 p-6 rounded-xl shadow-lg border border-gray-100 mb-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg">🔍</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    Advanced Filters
+                  </h3>
+                  <p className="text-sm text-gray-600">Refine your search results</p>
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <Input
                   placeholder="Product Title"
@@ -456,26 +571,31 @@ export default function MainDashboard() {
                   </option>
                 </select>
               </div>
-              <div className="flex justify-end mt-4 gap-2">
+              <div className="flex justify-end mt-6 gap-3">
                 <Button
-                  className="bg-blue-500 text-white cursor-pointer
-                  "
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white cursor-pointer hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   onClick={applyFilters}
                   loading={loading}
                 >
-                  Apply Filters
+                  <span className="flex items-center gap-2">
+                    <span>🔍</span>
+                    Apply Filters
+                  </span>
                 </Button>
                 <Button
                   variant="secondary"
-                  className="cursor-pointer"
+                  className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 transition-all duration-200"
                   onClick={resetFilters}
                 >
-                  Reset
+                  <span className="flex items-center gap-2">
+                    <span>🔄</span>
+                    Reset
+                  </span>
                 </Button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 cursor-pointer">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 cursor-pointer">
               {skeletonloading ? (
                 <div className="text-center col-span-full text-gray-500 text-sm">
                   <Skeleton />
@@ -483,45 +603,75 @@ export default function MainDashboard() {
               ) : Array.isArray(filteredProducts) &&
                 filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => (
-                  <Card key={product.id} className="flex gap-4 p-4 items-start">
-                    <img
-                      src={product.image || "/placeholder.png"}
-                      alt={product.image}
-                      className="w-24 h-24 object-cover rounded"
-                    />
-                    <CardContent className="p-0 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-blue-500">
-                          {product.name}
-                        </h3>
-                        <p className="text-sm text-green-600 font-semibold">
-                          {product.price}
-                        </p>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {product.description}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Posted by:{" "}
-                          <span className="font-medium">
-                            {product.seller?.username}
-                          </span>
-                        </p>
-                        <p className="text-xs font-semibold text-orange-500">
-                          {product.features}
-                        </p>
+                  <Card key={product.id} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-r from-white to-gray-50">
+                    <CardContent className="p-6">
+                      <div className="flex gap-4 items-start">
+                                                <div className="relative">
+                          <img
+                            src={product.image || "/placeholder.png"}
+                            alt={product.image}
+                            className="w-24 h-24 object-cover rounded-lg shadow-md group-hover:shadow-lg transition-shadow duration-300"
+                          />
+                          <div className="mt-2 text-center">
+                            <div className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                              Premium Quality
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              In Stock
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex-1 flex flex-col justify-between min-h-[96px]">
+                          <div>
+                            <h3 className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors duration-200 mb-2">
+                              {product.name}
+                            </h3>
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-2xl font-bold text-green-600">
+                                {product.price}
+                              </span>
+                              {product.features && (
+                                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                                  Hot Deal
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                              {product.description}
+                            </p>
+                            <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                              <span>Posted by: </span>
+                              <span className="font-semibold text-blue-600">
+                                {product.seller?.username}
+                              </span>
+                            </div>
+                            {product.features && (
+                              <div className="flex items-center gap-2 text-xs font-semibold text-orange-500">
+                                <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                                {product.features}
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            onClick={() => handleLoginFirst(product.id)}
+                            className="mt-4 w-max px-6 py-2 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                          >
+                            <span className="flex items-center gap-2">
+                              <span>👁️</span>
+                              View Details
+                            </span>
+                          </Button>
+                        </div>
                       </div>
-                      <Button
-                        onClick={() => handleLoginFirst(product.id)}
-                        className="mt-3 w-max px-4 py-1 cursor-pointer bg-blue-500 text-sm text-white"
-                      >
-                        View More
-                      </Button>
                     </CardContent>
                   </Card>
                 ))
               ) : (
-                <div className="text-center col-span-full text-gray-500 text-sm">
-                  No products found matching your filters.
+                <div className="text-center col-span-full py-12">
+                  <div className="text-6xl mb-4">🔍</div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+                  <p className="text-gray-500 text-sm">Try adjusting your filters or search terms</p>
                 </div>
               )}
             </div>
