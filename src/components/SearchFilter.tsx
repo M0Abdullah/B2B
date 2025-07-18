@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import loginStore from "../../store/page";
+import loginStore from "@/store/page";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
 
