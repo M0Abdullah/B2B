@@ -33,7 +33,6 @@ export default function SearchFilter({ value = "", setValue = () => {}, onSearch
         <div className="text-lg font-bold font-sans text-gray-800">
           USMarket.com <span className="text-blue-600">B2B Market</span>
         </div>
-        
         <div className="relative w-full max-w-md ">
           <Input
             type="text"
