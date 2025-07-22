@@ -4,13 +4,11 @@ class LoginStore {
   isSeller: boolean = false;
   isBuyer: boolean = true;
   islogin: boolean = false;
-  isHydrated: boolean = false; // Track hydration state
+  isHydrated: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
-    // Don't load from localStorage immediately to prevent hydration mismatch
     if (typeof window !== "undefined") {
-      // Use setTimeout to defer loading until after hydration
       setTimeout(() => {
         this.loadFromLocalStorage();
         this.isHydrated = true;
