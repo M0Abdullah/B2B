@@ -13,7 +13,6 @@ import loginStore from "../../store/page";
 export default function SignUp() {
   const router = useRouter();
   const store = loginStore;
-
   const [loading, setLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [otpModal, setOtpModal] = useState(false);
@@ -34,7 +33,6 @@ export default function SignUp() {
 
   const handleLoginNavigation = () => {
     setLoginLoading(true);
-    // Add delay for better UX
     setTimeout(() => {
       router.push("/login");
     }, 800);
@@ -93,8 +91,6 @@ export default function SignUp() {
   return (
     <main className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 via-white to-green-300 overflow-hidden">
       {contextHolder}
-      
-      {/* Login Loading Overlay */}
       {loginLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl max-w-sm mx-4">
