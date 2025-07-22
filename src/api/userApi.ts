@@ -75,7 +75,7 @@ export const productViewSellerUpdate = async (id: number, formData: FormData) =>
     const response = await axiosInstance.put(`/products/${id}/update/`, formData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
-        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
+        "Content-Type": undefined,
       },
     });
     return response.data;
@@ -88,7 +88,7 @@ export const productViewSellerDelete = async (id: number) => {
     const response = await axiosInstance.delete(`/products/${id}/delete/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
-        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
+        "Content-Type": undefined,
       },
     });
     return response.data;
@@ -115,7 +115,7 @@ export const productCreate = async (data: FormData) => {
     const response = await axiosInstance.post(`/products/create/`, data, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
-        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
+        "Content-Type": undefined,
       },
     });
     return response.data;
@@ -128,7 +128,7 @@ export const productByCategory = async (id: number) => {
     const response = await axiosInstance.get(`/products/?category=${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access")}`,
-        "Content-Type": undefined, // Let browser set multipart/form-data with boundary
+        "Content-Type": undefined,
       },
     });
     return response.data;
