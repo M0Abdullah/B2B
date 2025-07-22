@@ -40,9 +40,9 @@ function ProductDetailsContent() {
       if (category) {
         const response = await productByCategory(Number(category));
         if (Array.isArray(response) && response.length > 0) {
-          setProductDetails(response[0]); // ✅ Only use first product from category list
+          setProductDetails(response[0]);
         } else {
-          setProductDetails(null); // or show empty
+          setProductDetails(null); 
         }
       } else {
         const response = await productViewById(Number(productId));
@@ -109,7 +109,6 @@ function ProductDetailsContent() {
 
       {loading ? (
         <div className="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Skeleton loaders */}
           <div className="bg-white shadow-xl rounded-xl p-6">
             <Skeleton.Avatar
               active
@@ -233,8 +232,6 @@ function ProductDetailsContent() {
                   <p className="text-gray-500 text-sm">No reviews available.</p>
                 )}
               </div>
-
-              {/* Add Review Form */}
               <div className="mt-8 bg-gray-100 p-6 rounded-lg shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
                   Leave a Review
@@ -285,7 +282,6 @@ function ProductDetailsContent() {
               </div>
             </div>
           )}
-
           {seller && (
             <div className="bg-white shadow-xl rounded-xl p-6">
               <div className="flex flex-col items-center text-center">
@@ -334,7 +330,7 @@ function ProductDetailsContent() {
                 </div>
                 <button
                   onClick={() => {
-                    let phoneNumber = seller.phone_number?.replace(/\D/g, ""); // Remove non-digits
+                    let phoneNumber = seller.phone_number?.replace(/\D/g, "");
 
                     if (phoneNumber?.startsWith("0")) {
                       phoneNumber = "92" + phoneNumber.slice(1);
@@ -347,8 +343,6 @@ function ProductDetailsContent() {
                 >
                   Contact Seller
                 </button>
-
-                {/* Enhanced Contact Guidelines */}
                 <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
                   <div className="flex items-center mb-3">
                     <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
@@ -358,7 +352,6 @@ function ProductDetailsContent() {
                       Contact Guidelines
                     </h5>
                   </div>
-
                   <div className="grid gap-3 mb-4">
                     <div className="flex items-start space-x-3">
                       <div className="flex-shrink-0 w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
