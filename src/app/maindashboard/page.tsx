@@ -72,7 +72,6 @@ export default function MainDashboard() {
       setSkeletonLoading(true);
       try {
         const response = await productView();
-
         if (response) {
           setData(response);
           setFilteredProducts(response);
@@ -89,8 +88,6 @@ export default function MainDashboard() {
 
     getFetchData();
   }, [messageApi, router]);
-
-  // Listen to store changes and update local state
   useEffect(() => {
     const updateStoreState = () => {
       const newState = {
@@ -98,29 +95,19 @@ export default function MainDashboard() {
         isBuyer: loginStore.isBuyer,
         islogin: loginStore.islogin
       };
-      
-      // Check if state has changed
-      if (JSON.stringify(newState) !== JSON.stringify(storeState)) {
+            if (JSON.stringify(newState) !== JSON.stringify(storeState)) {
         setIsStateChanging(true);
-        
-        // Update state after 3 seconds
-        setTimeout(() => {
+                setTimeout(() => {
           setStoreState(newState);
           setIsStateChanging(false);
         }, 3000);
       }
     };
-
-    // Initial update
     updateStoreState();
-
-    // Set up an interval to check for store changes
     const interval = setInterval(updateStoreState, 100);
-
     return () => clearInterval(interval);
   }, [storeState]);
-
-  // Handle hydration and buyer modal
+  
   useEffect(() => {
     const checkHydration = () => {
       if (loginStore.isHydrated) {
@@ -129,7 +116,6 @@ export default function MainDashboard() {
           setAddModal(true);
         }
       } else {
-        // Check again after a short delay
         setTimeout(checkHydration, 50);
       }
     };
@@ -137,9 +123,8 @@ export default function MainDashboard() {
   }, [storeState.isBuyer]);
 
   useEffect(() => {}, []);
-
+  
   const applyFilters = () => {
-    // Only allow filtering for buyers
     if (!storeState.isBuyer) {
       messageApi.info("Please login as a buyer to use search and filters.");
       return;
@@ -235,12 +220,10 @@ export default function MainDashboard() {
   };
 
   const resetFilters = () => {
-    // Only allow reset for buyers
     if (!storeState.isBuyer) {
       messageApi.info("Please login as a buyer to use search and filters.");
       return;
     }
-    
     if(title === "" && category === "" && seller === "" && material === "" && feature === "" && priceRange === "" && includeDesc === "" && searchQuery === ""){
       messageApi.info("Please apply at least one filter.");
       return;
@@ -293,7 +276,6 @@ export default function MainDashboard() {
     setShowPremiumModal(false);
   };
 
-  // Fetch trending products when user is logged in
   useEffect(() => {
     if(storeState.islogin){
       const getTrending = async () => {
@@ -313,15 +295,12 @@ export default function MainDashboard() {
 
       getTrending();
     } else {
-      // Clear trending products when user logs out
       setTrending([]);
     }
   }, [storeState.islogin]);
 
-  // Auto-filter products when search query changes (only for buyers)
   useEffect(() => {
     if (!storeState.isBuyer) {
-      // If not a buyer, don't apply search filtering
       return;
     }
     
@@ -339,8 +318,6 @@ export default function MainDashboard() {
   return (
     <div className="bg-gray-100 min-h-screen relative">
       {contextHolder}
-      
-      {/* State Change Loader */}
       {isStateChanging && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl max-w-sm mx-4">
@@ -369,7 +346,6 @@ export default function MainDashboard() {
           </div>
         </div>
       )}
-      
       {detailPageLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl max-w-sm mx-4">
@@ -487,8 +463,6 @@ export default function MainDashboard() {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            
-            {/* Additional Info Card */}
             <div className="mt-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 border border-green-200">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">💡</span>
@@ -510,7 +484,6 @@ export default function MainDashboard() {
               </ul>
             </div>
           </div>
-
           <div className="flex-1">
             <div className="bg-gradient-to-r from-white to-gray-50 p-6 rounded-xl shadow-lg border border-gray-100 mb-6">
               <div className="flex items-center gap-3 mb-6">
@@ -786,7 +759,6 @@ export default function MainDashboard() {
           ))}
         </div>
       </Modal>
-
       {addModal && (
         <AddModal
           onAdd={() => setAddModal(true)}
