@@ -64,7 +64,6 @@ const Login = observer(() => {
 
   const handleSignupNavigation = () => {
     setSignupLoading(true);
-    // Add delay for better UX
     setTimeout(() => {
       router.push("/signup");
     }, 800);
@@ -115,8 +114,6 @@ const Login = observer(() => {
   return (
     <main className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-300 overflow-hidden">
       {contextHolder}
-
-      {/* Signup Loading Overlay */}
       {signupLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl max-w-sm mx-4">
@@ -196,7 +193,6 @@ const Login = observer(() => {
                 className="bg-white/70 backdrop-blur border border-gray-300"
               />
             </div>
-
             <Button
               type="submit"
               className=" cursor-pointer w-full mt-2 bg-blue-500 hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg"
@@ -205,17 +201,14 @@ const Login = observer(() => {
               Sign In
             </Button>
           </form>
-
           <p className="text-sm text-center text-gray-600">
             Forgot password?{" "}
             <span
               className="text-blue-500 hover:underline cursor-pointer"
               onClick={() => setResetVisible(true)}
-            >
-              Reset it
+            > Reset it
             </span>
           </p>
-
           <p className="text-sm text-center text-gray-600">
             Don&apos;t have an account?{" "}
             <a
@@ -242,7 +235,6 @@ const Login = observer(() => {
           <h2 className="text-xl font-semibold text-center text-blue-600">
             🔐 Reset Password
           </h2>
-
           {step === "email" && (
             <>
               <label
@@ -268,7 +260,6 @@ const Login = observer(() => {
               </Button>
             </>
           )}
-
           {step === "otp" && (
             <>
               <label htmlFor="otp" className="block text-sm text-gray-700">
