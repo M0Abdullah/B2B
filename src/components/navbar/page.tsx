@@ -4,7 +4,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import loginStore from "../../store/page";
-import { message } from "antd"; // Added message import
+import { message } from "antd"; 
 
 interface NavbarProps {
   selectedPlan: string;
@@ -33,34 +33,26 @@ const Navbar = ({
   const router = useRouter();
 
   const handleNavigation = (path: string, text: string) => {
-    // Check if already on the target page to prevent unnecessary navigation
     const isAlreadyOnPage = 
       (path === "/" && (pathname === "/" || pathname === "/maindashboard")) ||
       (path === "/maindashboard" && (pathname === "/" || pathname === "/maindashboard")) ||
       pathname === path;
-    
-    // Don't navigate if already on the target page
-    if (isAlreadyOnPage) {
-      setMenuOpen(false); // Still close mobile menu if open
+      if (isAlreadyOnPage) {
+      setMenuOpen(false); 
       return;
     }
-
-    // Route protection - only allow access to certain routes when not logged in
     const publicRoutes = ["/", "/maindashboard", "/login", "/signup"];
     const isPublicRoute = publicRoutes.includes(path);
     const isLoggedIn = loginStore.islogin;
 
     if (!isLoggedIn && !isPublicRoute) {
-      // User is not logged in and trying to access a private route
       messageApi.error("Please login to access this page");
       return;
     }
 
     setIsLoading(true);
     setLoadingText(text);
-    setMenuOpen(false); // Close mobile menu if open
-
-    // Simulate navigation delay for better UX
+    setMenuOpen(false);
     setTimeout(() => {
       router.push(path);
     }, 600);
@@ -68,7 +60,6 @@ const Navbar = ({
 
   const handlePremiumSelect = () => setPremium(true);
   const handleLogin = () =>
-    // loginStore.reset();
     handleNavigation("/login", "Redirecting to Login...");
   const addModalOpen = () => setAddModal(true);
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -84,7 +75,6 @@ const Navbar = ({
     setSellerDropdownOpen(false);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
@@ -105,12 +95,9 @@ const Navbar = ({
     };
   }, [buyerDropdownOpen, sellerDropdownOpen]);
 
-  // Helper function to get nav item classes based on current path
   const getNavItemClasses = (path: string) => {
     let isActive = false;
-    
-    // Check for specific path matches
-    if (path === "/maindashboard") {
+      if (path === "/maindashboard") {
       isActive = pathname === "/" || pathname === "/maindashboard";
     } else if (path === "/premiumplan") {
       isActive = pathname === "/premiumplan" || pathname === "/stripecard";
@@ -130,7 +117,6 @@ const Navbar = ({
   return (
     <>
       {contextHolder}
-      {/* Loading Overlay */}
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 flex flex-col items-center shadow-2xl">
@@ -153,7 +139,6 @@ const Navbar = ({
           </div>
         </div>
       )}
-
       <nav className="bg-white border-gray-200 dark:border-gray-600 dark:bg-gray-900">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
           <button
@@ -177,8 +162,6 @@ const Navbar = ({
               Flowbite
             </span>
           </button>
-
-          {/* Mobile Toggle Button */}
           <button
             type="button"
             onClick={toggleMenu}
@@ -200,8 +183,6 @@ const Navbar = ({
               />
             </svg>
           </button>
-
-          {/* Menu Items */}
           <div
             className={`${
               menuOpen ? "flex" : "hidden"
@@ -298,9 +279,6 @@ const Navbar = ({
       </button>
     </li>
   )}
-
-             
-
               {loginStore.isSeller &&
                 pathname !== "/stripecard" &&
                 pathname !== "/premiumplan" && (
