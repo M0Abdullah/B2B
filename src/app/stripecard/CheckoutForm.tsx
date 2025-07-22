@@ -14,13 +14,9 @@ export default function CheckoutForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!stripe || !elements) return;
-
     setIsProcessing(true);
     setMessage("");
-
-    // Simulate async operation
     setTimeout(() => {
       setMessage("✅ Payment submitted! Backend will handle processing.");
       setIsProcessing(false);
@@ -41,7 +37,6 @@ export default function CheckoutForm() {
           You will be charged <span className="font-semibold">$29.99</span>
         </p>
       </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Email address
@@ -55,7 +50,6 @@ export default function CheckoutForm() {
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Card details
@@ -74,7 +68,6 @@ export default function CheckoutForm() {
           />
         </div>
       </div>
-
       <button
         type="submit"
         disabled={!stripe || isProcessing}
