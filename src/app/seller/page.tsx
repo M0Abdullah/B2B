@@ -4,7 +4,6 @@ import { interactionView, productViewSeller, productViewSellerDelete, productVie
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// TypeScript interfaces
 interface Buyer {
   username: string;
   email: string;
@@ -54,12 +53,11 @@ export default function Seller() {
     subcategory: ""
   });
   
-  // New state for loading and confirmation modals
   const [updatingProductId, setUpdatingProductId] = useState<number | null>(null);
   const [deletingProductId, setDeletingProductId] = useState<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-
+  
   const handleProducts = () => {
     setIsLoading(true);
     setTimeout(() => {
@@ -114,7 +112,7 @@ export default function Seller() {
 
       await productViewSellerUpdate(id, formData);
       setEditingProduct(null);
-      getSellerProductsData(); // Refresh products
+      getSellerProductsData();
     } catch (error) {
       console.error("Error updating product:", error);
     } finally {
@@ -134,7 +132,7 @@ export default function Seller() {
     
     try {
       await productViewSellerDelete(productToDelete.id);
-      getSellerProductsData(); // Refresh products
+      getSellerProductsData(); 
       setShowDeleteModal(false);
       setProductToDelete(null);
     } catch (error) {
@@ -194,8 +192,6 @@ export default function Seller() {
       >
         Add New Product
       </button>
-
-      {/* 🔽 Interactions Section */}
       <div className="w-full max-w-7xl mb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           👥 Buyer Interactions
@@ -207,9 +203,7 @@ export default function Seller() {
                 key={item.id}
                 className="bg-white border border-blue-100 rounded-2xl shadow hover:shadow-lg transition duration-300 p-6 relative group"
               >
-                {/* Gradient Accent */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 rounded-t-2xl" />
-
                 <div className="mt-2">
                   <h3 className="text-xl font-bold text-gray-800 mb-1">
                     👤 {item.buyer.username}
@@ -227,21 +221,16 @@ export default function Seller() {
                       {item.buyer.city}, {item.buyer.state}, {item.buyer.country}
                     </span>
                   </div>
-
-                  {/* Number of Interactions Badge */}
                   <div className="flex items-center gap-2 mb-2">
                     <span className="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full shadow">
                       {item.number_of_interactions} {item.number_of_interactions === 1 ? 'Interaction' : 'Interactions'}
                     </span>
                   </div>
-
-                  {/* Last Interaction Timestamp */}
                   <div className="flex items-center gap-2 mb-2">
                     <span className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full">
                       Last Interacted: {item.last_interacted_at ? new Date(item.last_interacted_at).toLocaleString() : 'N/A'}
                     </span>
                   </div>
-
                   <div className="flex flex-wrap gap-2 mt-3">
                     <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
                       Product ID: {item.product}
@@ -251,8 +240,6 @@ export default function Seller() {
                     </span>
                   </div>
                 </div>
-
-                {/* Hover Hint */}
                 <div className="absolute top-2 right-2 bg-blue-50 text-blue-500 text-xs font-medium px-2 py-1 rounded shadow-sm group-hover:scale-105 transition-transform">
                   New View
                 </div>
@@ -265,8 +252,6 @@ export default function Seller() {
           )}
         </div>
       </div>
-
-      {/* 🔽 Products Section */}
       <div className="w-full max-w-7xl">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           📦 My Products
@@ -278,10 +263,7 @@ export default function Seller() {
                 key={product.id}
                 className="bg-white border border-green-100 rounded-2xl shadow hover:shadow-lg transition duration-300 p-6 relative group"
               >
-                {/* Gradient Accent */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 rounded-t-2xl" />
-
-                {/* Product Image */}
                 <div className="mb-4">
                   <img
                     src={product.image}
@@ -306,8 +288,6 @@ export default function Seller() {
                   <p className="text-sm text-gray-600 mb-2">
                     ⚡ Features: {product.features}
                   </p>
-
-                  {/* Reviews Section */}
                   <div className="mb-3">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-sm font-semibold text-gray-700">⭐ Reviews:</span>
@@ -319,15 +299,11 @@ export default function Seller() {
                       </div>
                     )}
                   </div>
-
-                  {/* Created Date */}
                   <div className="flex items-center gap-2 mb-3">
                     <span className="inline-block bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">
                       Created: {new Date(product.created_at).toLocaleDateString()}
                     </span>
                   </div>
-
-                  {/* Action Buttons */}
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={() => handleEditProduct(product)}
@@ -359,8 +335,6 @@ export default function Seller() {
                     </button>
                   </div>
                 </div>
-
-                {/* Status Badge */}
                 <div className="absolute top-2 right-2 bg-green-50 text-green-600 text-xs font-medium px-2 py-1 rounded shadow-sm">
                   Active
                 </div>
@@ -373,13 +347,10 @@ export default function Seller() {
           )}
         </div>
       </div>
-
-      {/* Edit Modal */}
       {editingProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-md mx-4 w-full">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Edit Product</h3>
-            
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Edit Product</h3>  
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -449,8 +420,6 @@ export default function Seller() {
           </div>
         </div>
       )}
-
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && productToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-md mx-4 w-full">
