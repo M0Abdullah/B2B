@@ -67,7 +67,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
     >
       {loginstore.isSeller ? (
         <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl p-8 space-y-8">
-          {/* Enhanced Header */}
           <div className="text-center space-y-3">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4 shadow-lg">
               <span className="text-white text-2xl">📢</span>
@@ -79,8 +78,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
               Showcase your product to thousands of potential buyers
             </p>
           </div>
-
-          {/* Enhanced Upload Section */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
@@ -113,8 +110,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
               </Upload>
             </div>
           </div>
-
-          {/* Enhanced Descriptions Section */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
@@ -141,8 +136,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
               ))}
             </div>
           </div>
-
-          {/* Enhanced Settings Section */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
@@ -196,8 +189,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
               </div>
             </div>
           </div>
-
-          {/* Enhanced Submit Button */}
           <div className="pt-4">
             <button
               onClick={handleSubmit}
@@ -213,7 +204,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
         </div>
       ) : (
         <div className="bg-gradient-to-br from-green-50 via-white to-emerald-50 rounded-2xl p-8 space-y-8">
-          {/* Enhanced Preview Header */}
           <div className="text-center space-y-4">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full mb-4 shadow-lg">
               <span className="text-white text-3xl">📸</span>
@@ -226,15 +216,12 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
               how your ads will appear to potential customers.
             </p>
           </div>
-
-          {/* Enhanced Image Gallery */}
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
             <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center flex items-center justify-center">
               <span className="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
               Featured Product Gallery
               <span className="w-3 h-3 bg-green-500 rounded-full ml-3"></span>
             </h3>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-2xl mx-auto">
               {(fileList.length > 0 ? fileList : sampleImages).map(
                 (file: any, index: number) => (
@@ -266,8 +253,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
               )}
             </div>
           </div>
-
-          {/* Preview Features */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <span className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></span>
@@ -308,8 +293,6 @@ const AddModal: React.FC<AddModalProps> = ({ onClose, onAdd }) => {
               </div>
             </div>
           </div>
-
-          {/* Call to Action */}
           <div className="text-center pt-4">
             <button
               onClick={onClose}
