@@ -117,7 +117,6 @@ export default function Product() {
 
   const handleSave = async () => {
     try {
-      // Validation before submission
       if (!forms.name.trim()) {
         messageApi.error("Please enter product name");
         return;
@@ -138,8 +137,6 @@ export default function Product() {
         messageApi.error("Please upload a product image");
         return;
       }
-
-      // Validate image file
       if (!(forms.image instanceof File)) {
         messageApi.error("Invalid image file. Please upload again.");
         return;
@@ -150,15 +147,12 @@ export default function Product() {
       formData.append("name", forms.name.trim());
       formData.append("description", forms.description.trim());
       formData.append("price", forms.price.trim());
-      formData.append("category", forms.category.toString()); // Parent category ID
-      formData.append("subcategory", forms.subcategory.toString()); // Subcategory ID
+      formData.append("category", forms.category.toString()); 
+      formData.append("subcategory", forms.subcategory.toString());
       formData.append("details", forms.details.trim());
       formData.append("bussinesstype", forms.bussinesstype);
       formData.append("features", forms.features.trim());
-
-      // Append image file with proper handling
       formData.append("image", forms.image, forms.image.name);
-
       console.log("📤 Sending FormData:");
       for (const [key, value] of formData.entries()) {
         if (value instanceof File) {
@@ -174,9 +168,7 @@ export default function Product() {
       }
 
       const productResponse = await productCreate(formData);
-
       messageApi.destroy(); 
-
       const productId = productResponse.id;
       if (!productId) {
         console.error("❌ No Product ID returned from API!");
@@ -185,7 +177,6 @@ export default function Product() {
 
       messageApi.success("🎉 Product created successfully!");
       router.push("/");
-      // Reset form
       setForms({
         name: "",
         description: "",
@@ -198,7 +189,6 @@ export default function Product() {
         features: "",
       });
       setSelectedCategoryName(""); 
-
       setImagePreview(null);
       const fileInput = document.getElementById(
         "image-upload",
@@ -207,7 +197,6 @@ export default function Product() {
     } catch (error: unknown) {
       messageApi.destroy(); 
       console.error("❌ Error submitting product:", error);
-
       const apiError = error as {
         response?: { data?: { image?: string[]; [key: string]: unknown } };
       };
@@ -221,8 +210,6 @@ export default function Product() {
       }
     }
   };
-
-
 
   useEffect(() => {
     const fetchCategorys = async () => {
@@ -265,10 +252,8 @@ export default function Product() {
 
       <div className="max-w-6xl mx-auto mt-8 px-6">
         <div className="bg-white/95 backdrop-blur-sm p-12 rounded-3xl shadow-2xl border border-white/20 relative overflow-hidden">
-          {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full opacity-20 -translate-y-16 translate-x-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-200 to-indigo-200 rounded-full opacity-20 translate-y-12 -translate-x-12"></div>
-
           <div className="relative z-10">
             <div className="text-center mb-8">
               <Title
@@ -282,13 +267,10 @@ export default function Product() {
               </p>
             </div>
             <Divider className="border-gradient-to-r from-purple-200 to-pink-200" />
-
             <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
               <label className="block text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 📸 Upload Product Image
               </label>
-
-              {/* Image Preview Section */}
               {imagePreview ? (
                 <div className="relative mb-4">
                   <div className="relative inline-block">
@@ -325,8 +307,6 @@ export default function Product() {
                   </div>
                 </div>
               )}
-
-              {/* File Input */}
               <input
                 id="image-upload"
                 type="file"
@@ -335,8 +315,6 @@ export default function Product() {
                 disabled={imageUploading}
                 className="block w-full text-sm text-gray-600 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-purple-500 file:to-pink-500 file:text-white hover:file:from-purple-600 hover:file:to-pink-600 file:shadow-lg file:transition-all file:duration-300 file:disabled:opacity-50 mt-4"
               />
-
-              {/* Upload Status */}
               {imageUploading && (
                 <div className="mt-3 flex items-center gap-2 text-blue-600">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
@@ -344,7 +322,6 @@ export default function Product() {
                 </div>
               )}
             </div>
-
             <Row gutter={[32, 32]} className="mt-8">
               <Col xs={24} md={12}>
                 <div className="space-y-2">
@@ -396,7 +373,6 @@ export default function Product() {
                 </div>
               </Col>
             </Row>
-
             <Row gutter={[32, 32]} className="mt-8">
               <Col xs={24} md={12}>
                 <div className="space-y-2">
