@@ -7,7 +7,6 @@ const PremiumPlan = () => {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {contextHolder}
@@ -28,7 +27,6 @@ const PremiumPlan = () => {
     This is under development – Premium and Payment Gateway. Please wait...
   </span>
 </div>
-
           <h1 className="text-5xl font-bold mb-4 text-gray-800">
             Choose Your <span className="text-blue-600">Premium</span> Plan
           </h1>
@@ -43,9 +41,7 @@ const PremiumPlan = () => {
             </span>
           </div>
         </div>
-
         <div className="flex flex-col lg:flex-row justify-center items-center gap-8 max-w-6xl mx-auto">
-          {/* Monthly Plan */}
           <div
             onClick={() => setSelectedPlan("monthly")}
             className={`cursor-pointer bg-white rounded-3xl shadow-lg p-10 w-full max-w-md text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 relative ${
@@ -57,7 +53,6 @@ const PremiumPlan = () => {
             <div className="absolute top-6 right-6 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
               Flexible
             </div>
-
             <div className="mb-6">
               <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-2xl">⚡</span>
@@ -67,7 +62,6 @@ const PremiumPlan = () => {
               </h2>
               <p className="text-gray-500">Perfect for getting started</p>
             </div>
-
             <div className="mb-8">
               <p className="text-5xl font-bold text-gray-900 mb-2">
                 $9.99
@@ -77,7 +71,6 @@ const PremiumPlan = () => {
               </p>
               <p className="text-sm text-gray-500 line-through">$14.99</p>
             </div>
-
             <div className="text-left mb-8 space-y-4">
               <div className="flex items-start space-x-3">
                 <span className="text-green-500 mt-1">✓</span>
@@ -130,8 +123,6 @@ const PremiumPlan = () => {
               &quot;Great for testing the waters!&quot; - Sarah K.
             </p>
           </div>
-
-          {/* Yearly Plan */}
           <div
             onClick={() => {
               setSelectedPlan("yearly");
@@ -159,7 +150,6 @@ const PremiumPlan = () => {
               </h2>
               <p className="text-gray-500">Best value for committed users</p>
             </div>
-
             <div className="mb-8">
               <p className="text-5xl font-bold text-gray-900 mb-2">
                 $99.99
@@ -240,8 +230,6 @@ const PremiumPlan = () => {
               &quot;Incredible value and features!&quot; - Michael R.
             </p>
           </div>
-
-          {/* Enterprise Plan Teaser */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl shadow-lg p-10 w-full max-w-md text-center text-white hover:shadow-2xl hover:scale-105 transition-all duration-300">
             <div className="mb-6">
               <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
@@ -289,8 +277,6 @@ const PremiumPlan = () => {
             </p>
           </div>
         </div>
-
-        {/* Trust Indicators */}
         <div className="mt-16 text-center">
           <p className="text-gray-500 mb-6">
             Trusted by 10,000+ businesses worldwide
