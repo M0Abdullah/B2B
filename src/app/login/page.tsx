@@ -75,7 +75,7 @@ const Login = observer(() => {
     setLoading(true);
     try {
       await otp1(email);
-      message.success("OTP sent to your email!");
+      messageApi.success("OTP sent to your email!");
       setStep("otp");
     } catch (error) {
       const err = error as { response?: { data?: { detail?: string } } };
@@ -93,13 +93,19 @@ const Login = observer(() => {
     setLoading(true);
     try {
       await otp2(email, otp, password);
-      message.success("OTP verified successfully!");
+      messageApi.success("OTP verified successfully! and password changed");
+      
+      setTimeout(() => {
+        messageApi.info("Please login again with your new password");
+      }, 2000);
+      
       setResetVisible(false);
       setEmail("");
       setPassword("");
       setOtp("");
       setStep("email");
-      router.push("/maindashboard");
+      setResetVisible(false)
+        
     } catch (error) {
       const err = error as { response?: { data?: { error?: string } } };
       const errorMessage =
